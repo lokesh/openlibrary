@@ -577,9 +577,4 @@ jQuery(function () {
             .then(module => module.initLibrarianDashboard(librarianDashboard))
     }
 
-    // List books
-    if (document.querySelector('.list-books')) {
-        import(/* webpackChunkName: "list-books" */ './list_books')
-            .then(module => module.ListBooks.init());
-    }
 });

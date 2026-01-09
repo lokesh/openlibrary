@@ -6,14 +6,41 @@ $code:
     { 'layout': 'details', 'name': _("Details"), 'ga_key': 'Details' },
     { 'layout': 'grid', 'name': _("Grid"), 'ga_key': 'Grid' },
   ]
+  current_layout = selected_layout or default_layout
 
-<span class="tools--layout tool-button tool-button--group" title="$_('View as: ')">
+<ol-radio-group
+  class="tools--layout"
+  orientation="horizontal"
+  size="small"
+  name="layout"
+  value="$current_layout"
+  data-default-layout="$default_layout"
+>
   $for layout_option in layout_options:
-    $ is_selected = layout_option['layout'] == selected_layout or (selected_layout is None and layout_option['layout'] == default_layout)
-    <a
-      class="tool-button $cond(is_selected, 'active', '')"
-      data-value="$layout_option['layout']"
-      href="$changequery(layout=cond(layout_option['layout'] == default_layout, None, layout_option['layout']))"
-      data-ol-link-track="SearchLayout|$layout_option['ga_key']"
-    >$layout_option['name']</a>
-</span>
+    <ol-radio value="$layout_option['layout']" appearance="button">$layout_option['name']</ol-radio>
+</ol-radio-group>
+
+<script type="module">
+// Wait for the custom element to be defined before attaching listeners
+customElements.whenDefined('ol-radio-group').then(() => {
+  const radioGroup = document.querySelector('.tools--layout');
+  const listBooks = document.querySelector('.list-books');
+  if (!radioGroup || !listBooks) return;
+
+  radioGroup.addEventListener('change', function(e) {
+    const selectedLayout = e.detail.value;
+
+    // Toggle grid class on list container
+    listBooks.classList.toggle('list-books--grid', selectedLayout === 'grid');
+
+    // Set cookie to remember preference
+    document.cookie = `LBL=$${selectedLayout}; path=/; max-age=31536000`;
+
+    // Update URL without reload (for shareable links)
+    const url = new URL(window.location.href);
+    url.searchParams.set('layout', selectedLayout);
+
+    history.replaceState(null, '', url.toString());
+  });
+});
+</script>

@@ -5,6 +5,7 @@
  * Components are bundled together via Vite for production use.
  */
 
-// Add component exports here as they are created
-// Example: export { OlMyComponent } from './OlMyComponent.js';
+// Import components to register them as custom elements
+import './OLRadio.js';
+import './OLRadioGroup.js';
 
