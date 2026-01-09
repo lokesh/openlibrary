@@ -72,19 +72,19 @@ table.services {
 // openlibrary/templates/admin/ip/index.html
 // openlibrary/templates/admin/people/view.html
 #adminHistory {
-  border-top: 1px solid @admin-table-border;
+  border-top: @border-table;
   font-family: @body-family;
   margin: 0 0 20px;
   th {
     background-color: @lightest-grey;
-    border-bottom: 1px solid @admin-table-border;
+    border-bottom: @border-table;
     color: @grey;
     font-size: 0.8675em;
     font-weight: 700;
     padding: 10px;
   }
   td {
-    border-bottom: 1px solid @admin-table-border;
+    border-bottom: @border-table;
     padding: 10px;
     font-size: 0.75em;
     &.number {
@@ -135,7 +135,7 @@ div.measurements {
 }
 
 body {
-  background-color: desaturate(@admin-table-border, 100);
+  background-color: @color-bg;
 }
 /* stylelint-disable selector-max-specificity */
 div#background {
