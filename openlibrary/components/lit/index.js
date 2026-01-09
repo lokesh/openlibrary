@@ -6,6 +6,10 @@
  */
 
 // Import components to register them as custom elements
+// Pure UI components
 import './OLRadio.js';
 import './OLRadioGroup.js';
+
+// Business logic components
+import './OLLayoutOptions.js';
 

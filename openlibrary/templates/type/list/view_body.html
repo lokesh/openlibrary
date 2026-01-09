@@ -90,7 +90,7 @@ $def seed_attrs(seed):
         <div class="search-results-stats">
             $:render_template("search/sort_options.html", selected_sort=sort, default_sort='index', search_scheme="lists_seeds")
             $ layout = get_remembered_layout()
-            $:render_template("search/layout_options.html", selected_layout=layout)
+            <ol-layout-options value="$layout" target="#listResults"></ol-layout-options>
         </div>
 
         $:macros.Pager(page+1, len(list.seeds), page_size)

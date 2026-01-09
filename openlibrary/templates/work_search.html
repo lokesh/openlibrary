@@ -89,11 +89,11 @@ $ layout = get_remembered_layout()
             $:render_template("search/sort_options.html", search_response.sort)
 
           $if search_response.num_found > 0:
-            $:render_template("search/layout_options.html", selected_layout=layout)
+            <ol-layout-options value="$layout" target="#search-results-list"></ol-layout-options>
         </div>
         <div class="resultsContainer search-results-container">
         <div id="searchResults">
-          <ul class="list-books $cond(layout == 'grid', 'list-books--grid')">
+          <ul id="search-results-list" class="list-books $cond(layout == 'grid', 'list-books--grid')">
             $ works = [get_doc(d) for d in search_response.docs]
             $ add_availability([(w.get('editions') or [None])[0] or w for w in works])
             $ username = ctx.user and ctx.user.key.split('/')[-1]

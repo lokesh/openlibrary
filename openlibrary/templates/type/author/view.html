@@ -132,7 +132,7 @@ $ show_librarian_extras = ctx.user and (ctx.user.is_admin() or ctx.user.is_libra
                         $:render_template("search/sort_options.html", books.sort, exclude='relevance', default_sort='editions')
 
                     $if books_count > 0:
-                        $:render_template("search/layout_options.html", selected_layout=layout)
+                        <ol-layout-options value="$layout" target="#author-works-list"></ol-layout-options>
 
                     $if books_count > 1:
                         $if input(mode="everything").mode == "everything":
@@ -144,7 +144,7 @@ $ show_librarian_extras = ctx.user and (ctx.user.is_admin() or ctx.user.is_libra
                 $:macros.Pager(page=safeint(query_param('page'), default=1), num_found=books_count)
 
                 <div id="searchResults">
-                    <ul class="list-books $cond(layout == 'grid', 'list-books--grid')">
+                    <ul id="author-works-list" class="list-books $cond(layout == 'grid', 'list-books--grid')">
                       $for doc in books.docs:
                          $:macros.SearchResultsWork(doc, show_librarian_extras=show_librarian_extras, include_dropper=True, seq_index=loop.index0)
                     </ul>

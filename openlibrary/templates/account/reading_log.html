@@ -55,12 +55,12 @@ $add_metatag(property="og:image", content=meta_photo_url)
         </span>
 
       $ layout = get_remembered_layout()
-      $:render_template("search/layout_options.html", selected_layout=layout)
+      <ol-layout-options value="$layout" target="#reading-log-list"></ol-layout-options>
     </div>
 
     $if not checkin_year:
       $:macros.Pager(int(current_page), doc_count, results_per_page=results_per_page)
-    <ul class="list-books $cond(layout == 'grid', 'list-books--grid')">
+    <ul id="reading-log-list" class="list-books $cond(layout == 'grid', 'list-books--grid')">
       $if docs:
         $ bookshelf_id = {'want-to-read': 1, 'currently-reading': 2, 'already-read': 3}.get(key, None)
         $ doc_number = 1
