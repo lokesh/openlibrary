@@ -1,0 +1,41 @@
+/**
+ * Layout Index
+ * ============
+ * Main layout styles.
+ */
+@import "../variables.css";
+@import "v2.css";
+
+#contentHead {
+  padding: 10px;
+}
+
+/* Reset h1 margin set in common.css */
+#contentHead h1 {
+  margin: 0;
+}
+
+div.contentBody,
+div#contentBody {
+  padding: 0 20px 20px;
+}
+
+div.contentBody img,
+div#contentBody img {
+  max-width: 100%;
+}
+
+div.contentBody pre,
+div#contentBody pre {
+  overflow-x: auto;
+}
+
+div.contentBody p a,
+div#contentBody p a {
+  word-wrap: break-word;
+}
+
+.section,
+section {
+  margin-bottom: 20px;
+}
