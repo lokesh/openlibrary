@@ -1,0 +1,76 @@
+/**
+ * Internet Archive Bar (Global Top Notice)
+ */
+@import "../variables.css";
+@import "buttonGhost.css";
+
+.iaBar {
+  display: flex;
+  max-width: 1060px;
+  margin: 0 auto;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.iaBar .iaLogo {
+  flex: 1;
+}
+
+.iaBar .iaLogo img {
+  max-width: 160px;
+  min-width: 60px;
+  width: 100%;
+}
+
+.iaBar .ghost-btn {
+  margin-right: 20px;
+}
+
+.heart {
+  color: var(--heart-color);
+  font-size: 1em;
+}
+
+#topNotice {
+  font-size: 0.9em;
+}
+
+#topNotice .topNotice-container {
+  margin: 0 auto;
+  width: 958px;
+}
+
+#topNotice .topNotice-left {
+  float: left;
+  display: table;
+}
+
+#topNotice .topNotice-left a {
+  display: table-cell;
+  vertical-align: middle;
+  height: 30px;
+  padding-right: 8px;
+  text-decoration: none;
+  color: var(--white);
+}
+
+#topNotice .topNotice-left a:hover {
+  color: var(--white);
+}
+
+#topNotice .topNotice-logo {
+  font-size: var(--font-size-headline-small);
+}
+
+@media only screen and (max-width: 450px) {
+  #topNotice .iabar-mobile {
+    font-size: 0.9em;
+  }
+
+  #topNotice .ghost-btn.iabar-mobile {
+    padding: 5px 7px;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+}

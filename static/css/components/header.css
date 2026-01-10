@@ -1,0 +1,27 @@
+/**
+ * Header Component
+ * Imports header bar and related components
+ */
+@import "../variables.css";
+@import "header-bar.css";
+@import "iaBar.css";
+@import "page-banner.css";
+
+/* Mobile */
+html {
+  scroll-padding-top: 60px;
+}
+
+/* Tablet */
+@media only screen and (min-width: 768px) {
+  html {
+    scroll-padding-top: 70px;
+  }
+}
+
+/* Desktop */
+@media all and (min-width: 960px) {
+  html {
+    scroll-padding-top: 0;
+  }
+}
