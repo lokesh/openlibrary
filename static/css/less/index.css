@@ -1,0 +1,7 @@
+/**
+ * CSS Variables Index
+ * ====================
+ * This file imports the CSS custom properties.
+ * Use this as a replacement for the LESS index.less file.
+ */
+@import "../variables.css";

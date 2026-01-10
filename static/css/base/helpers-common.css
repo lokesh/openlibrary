@@ -1,0 +1,72 @@
+/**
+ * Common Helper Classes
+ * =====================
+ * A standard list of helpers used across most pages.
+ */
+@import "../variables.css";
+
+.hidden {
+  display: none !important;
+}
+
+.inline {
+  display: inline;
+}
+
+/* All inline elements following an inline element should be smaller */
+.inline + span {
+  font-size: var(--font-size-label-small);
+}
+
+.desktop-only {
+  display: none !important;
+}
+
+@media only screen and (min-width: 960px) {
+  .desktop-only {
+    display: block !important;
+  }
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+#offline-info {
+  text-align: center;
+  padding: 10px 5px;
+  display: none;
+  background-color: var(--grey);
+  color: var(--white);
+}
+
+.hidden--nojs {
+  display: none;
+}
+
+.client-js .hidden--nojs {
+  display: block;
+}
+
+.clearfix {
+  width: 100%;
+  clear: both;
+  padding: 5px;
+}
+
+/* Shift content for screen readers only */
+.shift {
+  position: absolute !important;
+  left: -10000px !important;
+}
+
+a.hoverlink {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+.local-date-time {
+  color: var(--dark-green);
+  font-size: var(--font-size-label-small);
+  text-align: center;
+  padding: 5px 0 0;
+}
