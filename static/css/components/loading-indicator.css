@@ -1,0 +1,10 @@
+/**
+ * Loading Indicator
+ */
+@import "../variables.css";
+
+.loadingIndicator {
+  display: flex;
+  justify-content: center;
+  background: var(--lightest-grey);
+}

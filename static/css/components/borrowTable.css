@@ -1,0 +1,61 @@
+/**
+ * borrow-table
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#borrowtable
+ * Used in the following templates:
+ * - openlibrary/templates/account/loans.html
+ * - openlibrary/templates/account/waitlist.html
+ * - openlibrary/templates/admin/loans_table.html
+ * - openlibrary/templates/admin/people/view.html
+ */
+@import "../variables.css";
+
+.borrow-table .LoanReadForm {
+  margin: 10px 0;
+}
+
+.borrow-table table td {
+  margin-top: 30px;
+  border-bottom: 1px solid var(--beige-three);
+  vertical-align: top;
+}
+
+.borrow-table table td.actions {
+  padding: 15px 0;
+  font-size: 0.75em;
+  text-align: center;
+}
+
+.borrow-table table td.cover {
+  padding: 10px 0 10px 10px;
+}
+
+.borrow-table table td.titles {
+  padding: 15px;
+}
+
+.borrow-table table td.expires {
+  text-align: center;
+  padding: 15px;
+  white-space: nowrap;
+}
+
+.borrow-table table td.returns {
+  background-color: var(--lightest-grey);
+  font-size: 0.8125em;
+  color: var(--dark-grey);
+  text-align: center;
+  padding: 20px 15px;
+}
+
+.borrow-table table td.user,
+.borrow-table table td.what,
+.borrow-table table td.action {
+  text-align: center;
+  font-size: 0.75em;
+  padding: 15px;
+}
+
+.borrow-table table div.date {
+  font-size: 0.75em;
+  color: var(--grey);
+}

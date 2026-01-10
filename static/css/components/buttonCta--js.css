@@ -1,0 +1,20 @@
+/**
+ * CtaBtn (JS-only styles)
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#ctabtn
+ * This stylesheet will only apply if JS is present on the page.
+ */
+@import "../variables.css";
+
+.cta-btn--available--load,
+a.cta-btn--available--load {
+  background: url(/static/images/indicator.gif) center center no-repeat;
+  background-color: var(--primary-blue) !important;
+  opacity: 0.6;
+}
+
+.cta-btn--unavailable--load,
+a.cta-btn--unavailable--load {
+  background: url(/static/images/indicator.gif) center center no-repeat;
+  background-color: var(--primary-blue) !important;
+  opacity: 0.6;
+}

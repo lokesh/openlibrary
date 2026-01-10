@@ -1,0 +1,26 @@
+/**
+ * ButtonLink
+ * https://github.com/internetarchive/openlibrary/wiki/Design-Pattern-Library#buttonlink
+ */
+@import "../variables.css";
+
+.linkButton {
+  border-radius: 5px;
+  background-color: var(--white);
+  padding: 10px;
+  display: inline-block;
+  font-family: var(--body-family);
+  color: var(--grey);
+  border: 1px solid var(--mid-grey);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.linkButton:hover {
+  background-color: var(--grey-e7e7e7);
+}
+
+a.linkButton {
+  text-decoration: none;
+  color: var(--grey);
+}

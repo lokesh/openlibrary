@@ -1,0 +1,40 @@
+/**
+ * Compact Title
+ * Fixed title bar that appears when scrolling
+ */
+@import "../variables.css";
+
+@media screen and (min-width: 769px) {
+  .compact-title {
+    background: var(--white);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    z-index: var(--z-index-level-5);
+    position: fixed;
+    top: 0;
+    height: 35px;
+    width: calc(100% - 20px);
+    padding: 0 14px;
+  }
+
+  .compact-title__edit-btn {
+    transform: translateY(6px);
+  }
+
+  .compact-title__heading {
+    font-size: 1.25em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-family-title);
+    font-weight: 600;
+  }
+}
+
+@media only screen and (min-width: 960px) {
+  .compact-title {
+    width: calc(100% - 230px);
+    max-width: 830px;
+  }
+}
