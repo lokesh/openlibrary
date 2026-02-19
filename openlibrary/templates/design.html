@@ -154,4 +154,129 @@ $ _x = ctx.setdefault('cssfile', 'design')
       </section>
     </div>
     </article>
+
+  <article class="design-pattern">
+    <div class="design-pattern__header">
+      <h2 class="design-pattern__title">$_("Carousel component")</h2>
+      <p>$_("A Netflix-style carousel with page-based navigation, responsive column counts, peek effect, and touch/swipe support.")</p>
+    </div>
+    <div class="design-pattern__content">
+      <section class="example">
+        <h3 class="example__title">$_("Basic carousel (book covers)")</h3>
+        <p>$_("Items per row adjusts to container width: 2 on mobile up to 6 on wide screens. Hover to see navigation arrows.")</p>
+        <code class="example__code">&lt;ol-carousel label="Trending Books"&gt;&lt;div&gt;...&lt;/div&gt; ...&lt;/ol-carousel&gt;</code>
+        <div class="example__output" id="carousel-demo-1-container">
+          <ol-carousel id="carousel-demo-1" label="Trending Books"></ol-carousel>
+          <p>$_("Current page:"): <strong id="carousel-demo-1-page">1</strong> / <strong id="carousel-demo-1-total">1</strong></p>
+        </div>
+        <script>
+          (function() {
+            var el = document.getElementById('carousel-demo-1');
+            var colors = [
+              '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6',
+              '#1abc9c', '#e67e22', '#2980b9', '#27ae60', '#c0392b',
+              '#8e44ad', '#16a085', '#d35400', '#2c3e50', '#f1c40f',
+              '#7f8c8d', '#e74c3c', '#3498db'
+            ];
+            for (var i = 0; i < colors.length; i++) {
+              var card = document.createElement('div');
+              card.style.cssText = 'aspect-ratio: 2/3; background:' + colors[i] + '; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; font-weight: 600;';
+              card.textContent = 'Book ' + (i + 1);
+              el.appendChild(card);
+            }
+            el.addEventListener('ol-carousel-page-change', function(e) {
+              document.getElementById('carousel-demo-1-page').textContent = e.detail.page + 1;
+              document.getElementById('carousel-demo-1-total').textContent = e.detail.totalPages;
+            });
+          })();
+        </script>
+      </section>
+
+      <section class="example">
+        <h3 class="example__title">$_("Narrow container (fewer columns)")</h3>
+        <p>$_("Columns are based on container width, not viewport. This 400px container shows 2 items.")</p>
+        <div class="example__output" style="max-width: 400px;">
+          <ol-carousel id="carousel-demo-narrow" label="Narrow Example" gap="8"></ol-carousel>
+        </div>
+        <script>
+          (function() {
+            var el = document.getElementById('carousel-demo-narrow');
+            var colors = ['#1abc9c', '#3498db', '#9b59b6', '#e74c3c', '#f39c12', '#2ecc71', '#e67e22', '#2c3e50'];
+            for (var i = 0; i < colors.length; i++) {
+              var card = document.createElement('div');
+              card.style.cssText = 'aspect-ratio: 2/3; background:' + colors[i] + '; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600;';
+              card.textContent = 'Item ' + (i + 1);
+              el.appendChild(card);
+            }
+          })();
+        </script>
+      </section>
+
+      <section class="example">
+        <h3 class="example__title">$_("Custom peek and gap")</h3>
+        <p>$:_("Use %(peek)s (fraction, 0–0.5) and %(gap)s (px) to control spacing.", peek="<code>peek</code>", gap="<code>gap</code>")</p>
+        <code class="example__code">&lt;ol-carousel peek="0.15" gap="12" label="Spacious"&gt;...&lt;/ol-carousel&gt;</code>
+        <div class="example__output">
+          <ol-carousel id="carousel-demo-spacious" peek="0.15" gap="12" label="Spacious Layout"></ol-carousel>
+        </div>
+        <script>
+          (function() {
+            var el = document.getElementById('carousel-demo-spacious');
+            var colors = ['#2c3e50', '#34495e', '#7f8c8d', '#95a5a6', '#bdc3c7', '#2c3e50', '#34495e', '#7f8c8d', '#95a5a6', '#bdc3c7', '#2c3e50', '#34495e'];
+            for (var i = 0; i < colors.length; i++) {
+              var card = document.createElement('div');
+              card.style.cssText = 'aspect-ratio: 16/9; background:' + colors[i] + '; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600;';
+              card.textContent = 'Slide ' + (i + 1);
+              el.appendChild(card);
+            }
+          })();
+        </script>
+      </section>
+
+      <section class="example">
+        <h3 class="example__title">$_("Few items (no navigation)")</h3>
+        <p>$_("When all items fit in one page, arrows and indicators are hidden.")</p>
+        <div class="example__output" style="max-width: 600px;">
+          <ol-carousel id="carousel-demo-few" label="Few Items"></ol-carousel>
+        </div>
+        <script>
+          (function() {
+            var el = document.getElementById('carousel-demo-few');
+            var colors = ['#e74c3c', '#3498db', '#2ecc71'];
+            for (var i = 0; i < colors.length; i++) {
+              var card = document.createElement('div');
+              card.style.cssText = 'aspect-ratio: 2/3; background:' + colors[i] + '; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600;';
+              card.textContent = 'Book ' + (i + 1);
+              el.appendChild(card);
+            }
+          })();
+        </script>
+      </section>
+
+      <section class="example">
+        <h3 class="example__title">$_("CSS custom properties")</h3>
+        <p>$_("Style arrows and indicators via CSS custom properties.")</p>
+        <code class="example__code">--ol-carousel-arrow-bg, --ol-carousel-indicator-active, etc.</code>
+        <div class="example__output" style="background: #1a1a2e; padding: 16px 0; border-radius: 8px;">
+          <ol-carousel
+            id="carousel-demo-themed"
+            label="Dark Theme"
+            style="--ol-carousel-arrow-bg: rgba(255,255,255,0.2); --ol-carousel-arrow-color: #e0e0ff; --ol-carousel-indicator-color: rgba(255,255,255,0.2); --ol-carousel-indicator-active: #e0e0ff;"
+          ></ol-carousel>
+        </div>
+        <script>
+          (function() {
+            var el = document.getElementById('carousel-demo-themed');
+            var colors = ['#e94560', '#0f3460', '#533483', '#16213e', '#e94560', '#0f3460', '#533483', '#16213e', '#e94560', '#0f3460', '#533483', '#16213e', '#e94560', '#0f3460'];
+            for (var i = 0; i < colors.length; i++) {
+              var card = document.createElement('div');
+              card.style.cssText = 'aspect-ratio: 2/3; background:' + colors[i] + '; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600;';
+              card.textContent = (i + 1);
+              el.appendChild(card);
+            }
+          })();
+        </script>
+      </section>
+    </div>
+  </article>
 </div>

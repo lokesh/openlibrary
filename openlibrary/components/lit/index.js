@@ -6,6 +6,7 @@
  */
 
 // Export components (importing also registers them as custom elements)
+export { OlCarousel } from './OlCarousel.js';
 export { OLReadMore } from './OLReadMore.js';
 export { OlPagination } from './OlPagination.js';
 
