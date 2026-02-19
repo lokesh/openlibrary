@@ -438,7 +438,6 @@ export class OlCarousel extends LitElement {
         const cols = this._columns;
         const peek = this.peek;
         const gap = this.gap;
-        const count = this._itemCount;
 
         const itemFraction = (1 - peek * 2) / cols;
         const itemPercent = itemFraction * 100;
@@ -454,7 +453,6 @@ export class OlCarousel extends LitElement {
             --_item-width: calc(${itemPercent}% - ${gap}px + ${gap / cols}px);
             --_peek-px: calc(${peek} * ${this.clientWidth || 300}px);
             gap: ${gap}px;
-            padding-left: calc(${this._page === 0 ? 0 : peek} * 100%);
             transform: translateX(${offset}%);
         `;
     }
