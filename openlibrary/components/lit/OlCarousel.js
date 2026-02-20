@@ -169,11 +169,11 @@ export class OlCarousel extends LitElement {
         }
 
         .arrow.prev {
-            left: 12px;
+            left: 8px;
         }
 
         .arrow.next {
-            right: 12px;
+            right: 8px;
         }
 
         .arrow[hidden] {
@@ -199,8 +199,8 @@ export class OlCarousel extends LitElement {
             align-items: center;
             justify-content: center;
             width: var(--_arrow-icon-size);
-            height: var(--_arrow-icon-size);
-            border-radius: 50%;
+            height: 64px;
+            border-radius: 16px;
             background: var(--_arrow-icon-bg);
             color: var(--_arrow-color);
             border: 1px solid var(--_arrow-icon-border);

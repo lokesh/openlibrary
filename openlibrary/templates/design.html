@@ -252,31 +252,6 @@ $ _x = ctx.setdefault('cssfile', 'design')
           })();
         </script>
       </section>
-
-      <section class="example">
-        <h3 class="example__title">$_("CSS custom properties")</h3>
-        <p>$_("Style arrows and indicators via CSS custom properties.")</p>
-        <code class="example__code">--ol-carousel-arrow-bg, --ol-carousel-indicator-active, etc.</code>
-        <div class="example__output" style="background: #1a1a2e; padding: 16px 0; border-radius: 8px;">
-          <ol-carousel
-            id="carousel-demo-themed"
-            label="Dark Theme"
-            style="--ol-carousel-arrow-bg: rgba(255,255,255,0.2); --ol-carousel-arrow-color: #e0e0ff; --ol-carousel-indicator-color: rgba(255,255,255,0.2); --ol-carousel-indicator-active: #e0e0ff;"
-          ></ol-carousel>
-        </div>
-        <script>
-          (function() {
-            var el = document.getElementById('carousel-demo-themed');
-            var colors = ['#e94560', '#0f3460', '#533483', '#16213e', '#e94560', '#0f3460', '#533483', '#16213e', '#e94560', '#0f3460', '#533483', '#16213e', '#e94560', '#0f3460'];
-            for (var i = 0; i < colors.length; i++) {
-              var card = document.createElement('div');
-              card.style.cssText = 'aspect-ratio: 2/3; background:' + colors[i] + '; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600;';
-              card.textContent = (i + 1);
-              el.appendChild(card);
-            }
-          })();
-        </script>
-      </section>
     </div>
   </article>
 </div>
