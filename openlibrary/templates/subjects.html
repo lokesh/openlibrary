@@ -56,7 +56,58 @@ $ q = query_param('q')
     $if has_tag:
       $:format(sanitize(page.tag.body))
     $else:
-      $# Only show default carousel if subject doesn't have an associated Tag
+      $# ol-carousel web component (proof of concept, above legacy carousel)
+      $code:
+        _oc_query = '%s %s' % (page.solr_query, '-subject:"content_warning:cover"')
+        _oc_fields = 'key,title,author_name,availability,cover_i,ia,cover_edition_key,id_project_gutenberg,id_librivox,id_standard_ebooks,id_openstax,providers'
+        _oc_result = work_search({'q': _oc_query, 'has_fulltext': 'true'}, fields=_oc_fields, sort='trending,trending_score_hourly_sum', limit=18, facet=False, request_label='OL_CAROUSEL')
+        _oc_books = [storage(b) for b in (_oc_result.get('docs', []))]
+        _oc_cover_host = '//covers.openlibrary.org'
+        _oc_fallback = 'https://openlibrary.org/images/icons/avatar_book.png'
+      $if _oc_books:
+        <div class="carousel-section">
+          <div class="carousel-section-header">
+            <h2 class="home-h2">
+              <a href="/search?$urlencode(dict(q=page.solr_query, sort='trending'))">$_("Trending in %(name)s", name=page.name)</a>
+            </h2>
+          </div>
+          <ol-carousel label="$_('Trending in %(name)s', name=page.name)" gap="20">
+            $for book in _oc_books:
+              $code:
+                _b_url = book.get('key', '')
+                _b_title = book.get('title', '')
+                _b_authors = book.get('author_name', [])
+                _b_byline = (', '.join(_b_authors)) if _b_authors else ''
+                _b_alt = ('%s by %s' % (_b_title, _b_byline)) if _b_byline else _b_title
+                _b_cover_i = book.get('cover_i')
+                _b_ia = book.get('ia', [])
+                _b_cek = book.get('cover_edition_key', '')
+                if _b_cover_i and str(_b_cover_i) != '-1':
+                    _b_cover = '%s/b/id/%s-M.jpg' % (_oc_cover_host, _b_cover_i)
+                elif _b_ia:
+                    _b_cover = '%s/b/ia/%s-M.jpg?default=%s' % (_oc_cover_host, _b_ia[0], _oc_fallback)
+                elif _b_cek:
+                    _b_cover = '%s/b/olid/%s-M.jpg' % (_oc_cover_host, _b_cek)
+                else:
+                    _b_cover = ''
+              <div class="book">
+                <div class="book-cover">
+                  <a href="$_b_url">
+                    $if _b_cover:
+                      <img class="bookcover" loading="lazy" src="$_b_cover" alt="$_b_alt" title="$_b_alt" />
+                    $else:
+                      <div class="carousel__item__blankcover" title="$_b_title">
+                        <div class="carousel__item__blankcover--title">$:macros.TruncateString(_b_title, 70)</div>
+                        $if _b_byline:
+                          <div class="carousel__item__blankcover--authors">$:macros.TruncateString(_b_byline, 30)</div>
+                      </div>
+                  </a>
+                </div>
+                $:macros.LoanStatus(book, work_key=book.get('key'), listen=False, secondary_action=False)
+              </div>
+          </ol-carousel>
+        </div>
+      $# Legacy carousel (kept for comparison)
       $:macros.QueryCarousel(query=page.solr_query, sort='trending,trending_score_hourly_sum', user_lang_only=True, fallback=True)
     $:macros.PublishingHistory(page.publishing_history)
 
