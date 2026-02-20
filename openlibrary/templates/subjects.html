@@ -66,12 +66,13 @@ $ q = query_param('q')
         _oc_fallback = 'https://openlibrary.org/images/icons/avatar_book.png'
       $if _oc_books:
         <div class="carousel-section">
+          <div class="carousel-container">
           <div class="carousel-section-header">
             <h2 class="home-h2">
               <a href="/search?$urlencode(dict(q=page.solr_query, sort='trending'))">$_("Trending in %(name)s", name=page.name)</a>
             </h2>
           </div>
-          <ol-carousel label="$_('Trending in %(name)s', name=page.name)" gap="20">
+          <ol-carousel label="$_('Trending in %(name)s', name=page.name)" hide-indicators>
             $for book in _oc_books:
               $code:
                 _b_url = book.get('key', '')
@@ -107,6 +108,7 @@ $ q = query_param('q')
               </div>
           </ol-carousel>
         </div>
+        </div>
       $# Legacy carousel (kept for comparison)
       $:macros.QueryCarousel(query=page.solr_query, sort='trending,trending_score_hourly_sum', user_lang_only=True, fallback=True)
     $:macros.PublishingHistory(page.publishing_history)
@@ -119,3 +121,10 @@ $ q = query_param('q')
 
     <div class="section clearfix"></div>
 </div>
+
+
+<style>
+  .book {
+    padding: 12px 0;
+  }
+</style>

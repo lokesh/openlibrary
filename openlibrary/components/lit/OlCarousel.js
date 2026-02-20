@@ -17,6 +17,7 @@ import { LitElement, html, css, nothing } from 'lit';
  * @prop {String} label - Accessible label for the carousel region (default: "Carousel")
  * @prop {String} labelPrevious - Aria-label for previous arrow (default: "Previous page")
  * @prop {String} labelNext - Aria-label for next arrow (default: "Next page")
+ * @prop {Boolean} hideIndicators - When present, hides the page indicator bar (default: false)
  *
  * @fires ol-carousel-page-change - Fired after page transition. detail: { page: Number, totalPages: Number }
  *
@@ -33,6 +34,7 @@ export class OlCarousel extends LitElement {
         label: { type: String },
         labelPrevious: { type: String, attribute: 'label-previous' },
         labelNext: { type: String, attribute: 'label-next' },
+        hideIndicators: { type: Boolean, attribute: 'hide-indicators' },
         _page: { type: Number, state: true },
         _totalPages: { type: Number, state: true },
         _columns: { type: Number, state: true },
@@ -42,8 +44,9 @@ export class OlCarousel extends LitElement {
     static styles = css`
         :host {
             display: block;
-            --_arrow-color: var(--ol-carousel-arrow-color, #fff);
-            --_arrow-icon-bg: var(--ol-carousel-arrow-icon-bg, hsl(202, 96%, 37%));
+            --_arrow-color: var(--ol-carousel-arrow-color, #333);
+            --_arrow-icon-bg: var(--ol-carousel-arrow-icon-bg, #fff);
+            --_arrow-icon-border: var(--ol-carousel-arrow-icon-border, hsl(55, 20%, 83%));
             --_arrow-icon-size: var(--ol-carousel-arrow-icon-size, 36px);
             --_indicator-color: var(--ol-carousel-indicator-color, #ccc);
             --_indicator-active: var(--ol-carousel-indicator-active, #333);
@@ -118,6 +121,30 @@ export class OlCarousel extends LitElement {
             pointer-events: none !important;
         }
 
+        /* ── Edge gradients (always visible to hint at more content) ── */
+        .edge-fade {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: calc(var(--_peek, 0.075) * 100% + 16px);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .edge-fade[hidden] {
+            display: none;
+        }
+
+        .edge-fade.prev {
+            left: 0;
+            background: linear-gradient(to left, transparent, rgba(255, 255, 255, 0.4) 40%, rgba(255, 255, 255, 0.85));
+        }
+
+        .edge-fade.next {
+            right: 0;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4) 40%, rgba(255, 255, 255, 0.85));
+        }
+
         /* ── Arrow buttons ── */
         .arrow {
             display: flex;
@@ -129,12 +156,7 @@ export class OlCarousel extends LitElement {
             width: var(--_arrow-icon-size);
             z-index: 2;
             border: none;
-            background: linear-gradient(
-                to var(--_arrow-dir, right),
-                transparent,
-                rgba(255, 255, 255, 0.4) 40%,
-                rgba(255, 255, 255, 0.85)
-            );
+            background: none;
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.2s;
@@ -147,19 +169,18 @@ export class OlCarousel extends LitElement {
         }
 
         .arrow.prev {
-            left: 0;
-            --_arrow-dir: left;
+            left: 12px;
         }
 
         .arrow.next {
-            right: 0;
+            right: 12px;
         }
 
         .arrow[hidden] {
             display: none;
         }
 
-        /* Show arrows on hover/focus, always on touch devices */
+        /* Show arrow icons on hover/focus, hide on touch */
         @media (hover: hover) {
             .carousel:hover .arrow:not([hidden]),
             .carousel:focus-within .arrow:not([hidden]) {
@@ -182,7 +203,8 @@ export class OlCarousel extends LitElement {
             border-radius: 50%;
             background: var(--_arrow-icon-bg);
             color: var(--_arrow-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--_arrow-icon-border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .arrow svg {
@@ -235,11 +257,12 @@ export class OlCarousel extends LitElement {
 
     constructor() {
         super();
-        this.peek = 0.075;
-        this.gap = 4;
+        this.peek = 0.03;
+        this.gap = 12;
         this.label = 'Carousel';
         this.labelPrevious = 'Previous page';
         this.labelNext = 'Next page';
+        this.hideIndicators = false;
         this._page = 0;
         this._totalPages = 1;
         this._columns = 6;
@@ -700,7 +723,7 @@ export class OlCarousel extends LitElement {
     // ── Render ──
 
     _renderIndicators() {
-        if (this._totalPages <= 1) return nothing;
+        if (this.hideIndicators || this._totalPages <= 1) return nothing;
         return html`
             <div class="indicators" role="tablist" aria-label="Carousel pages">
                 ${Array.from({ length: this._totalPages }, (_, i) => html`
@@ -734,6 +757,9 @@ export class OlCarousel extends LitElement {
                     aria-live="polite"
                     aria-atomic="false"
                 >
+                    <div class="edge-fade prev" ?hidden=${!showPrev}></div>
+                    <div class="edge-fade next" ?hidden=${!showNext}></div>
+
                     <button
                         class="arrow prev"
                         aria-label=${this.labelPrevious}
