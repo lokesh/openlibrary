@@ -84,6 +84,7 @@ class RegisterForm(Form):
             klass='required',
             id='emailAddr',
             required="true",
+            autocomplete="email",
             validators=[
                 vemail,
                 email_not_already_used,
@@ -97,6 +98,7 @@ class RegisterForm(Form):
             klass='required',
             help=_("Public and cannot be changed later."),
             autocapitalize="off",
+            autocomplete="username",
             validators=[vlogin, username_validator],
             pattern=vlogin.rexp.pattern,
             title=vlogin.msg,
@@ -110,6 +112,7 @@ class RegisterForm(Form):
             minlength="3",
             maxlength="20",
             required="true",
+            autocomplete="new-password",
         ),
     )
 
@@ -149,10 +152,16 @@ ForgotPassword = Form(
     Textbox(
         'email',
         description=_("Your email address"),
+        autocomplete="email",
         validators=[vemail, email_already_used],
     )
 )
 
 ResetPassword = Form(
-    Password('password', description=_("Choose a password"), validators=[vpass])
+    Password(
+        'password',
+        description=_("Choose a password"),
+        autocomplete="new-password",
+        validators=[vpass],
+    )
 )
