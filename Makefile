@@ -42,6 +42,7 @@ components:
 lit-components:
 	mkdir -p $(BUILD)/lit-components_new
 	BUILD_DIR=$(BUILD)/lit-components_new NODE_ENV=production npx vite build -c openlibrary/components/vite-lit.config.mjs
+	BUILD_DIR=$(BUILD)/lit-components_new node scripts/extract-lit-host-styles.js
 	mkdir -p $(BUILD)/lit-components
 	rm -rf $(BUILD)/lit-components
 	mv $(BUILD)/lit-components_new $(BUILD)/lit-components

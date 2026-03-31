@@ -25,6 +25,23 @@ import { LitElement, html, css } from 'lit';
  * </ol-read-more>
  */
 export class OLReadMore extends LitElement {
+    /**
+     * Pre-hydration overrides applied via :not(:defined) before JS loads.
+     * Prevents layout shift by reserving space and hiding unstyled content.
+     * Extracted at build time by scripts/extract-lit-host-styles.js.
+     *
+     * @prehydration
+     * ol-read-more:not(:defined) {
+     *     min-height: 121px;
+     *     visibility: hidden;
+     *     overflow: hidden;
+     * }
+     * ol-read-more[label-size="small"]:not(:defined) {
+     *     min-height: 107px;
+     * }
+     * @end-prehydration
+     */
+
     static properties = {
         maxHeight: { type: String, attribute: 'max-height' },
         moreText: { type: String, attribute: 'more-text' },

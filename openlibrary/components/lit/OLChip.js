@@ -24,6 +24,20 @@ import { LitElement, html, css, nothing } from 'lit';
  * <ol-chip size="small" count="76" href="/subjects/fiction">Fiction</ol-chip>
  */
 export class OLChip extends LitElement {
+    /**
+     * Pre-hydration overrides to reserve chip height before JS loads,
+     * preventing layout shift. Extracted by scripts/extract-lit-host-styles.js.
+     *
+     * @prehydration
+     * ol-chip:not(:defined) {
+     *     height: 30px;
+     * }
+     * ol-chip[size="small"]:not(:defined) {
+     *     height: 24px;
+     * }
+     * @end-prehydration
+     */
+
     static properties = {
         selected: { type: Boolean, reflect: true },
         size: { type: String, reflect: true },

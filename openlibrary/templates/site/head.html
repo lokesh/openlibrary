@@ -30,30 +30,19 @@ $def with (title)
     $ style = 'build/css/page-%s.css'%ctx.get('cssfile', 'user')
     <link href="$static_url(style)" rel="stylesheet" type="text/css" />
 
-    <!-- TODO: Move these pre-hydration web component styles into a dedicated CSS file -->
-    <style>
-      /* Hide ol-read-more content before component is defined to prevent flash of unstyled content. The min-height is set to match the default height of the component. */
-      ol-read-more {
-        min-height: 121px;
-        visibility: hidden;
-        overflow: hidden;
-      }
-      ol-read-more[label-size="small"] {
-        min-height: 107px;
-      }
-
-      /* Reserve height for ol-chip before Lit hydrates to prevent layout shift */
-      ol-chip:not(:defined) {
-        display: inline-block;
-        height: 30px;
-      }
-      ol-chip[size="small"]:not(:defined) {
-        height: 24px;
-      }
-    </style>
+    $# Pre-hydration styles for Lit web components — auto-generated from component
+    $# :host styles and @prehydration annotations. Prevents FOUC/layout shift by
+    $# reserving space and appearance before JS loads. See scripts/extract-lit-host-styles.js
+    <link href="$static_url('build/lit-components/pre-hydration.css')" rel="stylesheet" type="text/css" />
 
     <noscript>
       <style>
+        /* Show web component content even without JS */
+        ol-read-more {
+          visibility: visible !important;
+          min-height: auto !important;
+          overflow: visible !important;
+        }
         /* Don't hide content with clamp if no js to show more/less */
         .clamp {
           -webkit-line-clamp: unset !important;
