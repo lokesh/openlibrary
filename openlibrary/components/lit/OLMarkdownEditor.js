@@ -41,6 +41,7 @@ const ICONS = {
     hr: html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
     ul: html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>`,
     ol: html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>`,
+    htmlBlock: html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>`,
     more: html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`
 };
 
@@ -53,7 +54,10 @@ export class OLMarkdownEditor extends LitElement {
         showLinkPopover: { state: true },
         linkInputValue: { state: true },
         _errorMsg: { state: true },
-        showOverflowMenu: { state: true }
+        showOverflowMenu: { state: true },
+        showHtmlPopover: { state: true },
+        htmlInputValue: { state: true },
+        _editingHtmlPos: { state: true }
     };
 
     static styles = css`
@@ -260,6 +264,100 @@ export class OLMarkdownEditor extends LitElement {
       .overflow-secondary { display: none; }
       .overflow-menu-wrapper.overflow-toggle { display: inline-flex; }
     }
+
+    .editor-input .html-block-view {
+      position: relative;
+      border: 1px dashed var(--light-grey);
+      border-radius: var(--border-radius-card);
+      background: var(--off-white);
+      padding: var(--spacing-sm);
+      margin: var(--spacing-sm) 0;
+      user-select: none;
+    }
+
+    .editor-input .html-block-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--darker-grey);
+      letter-spacing: 0.05em;
+    }
+
+    .editor-input .html-block-edit-btn {
+      float: right;
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border: var(--border-input);
+      border-radius: var(--border-radius-button);
+      background: var(--white);
+      cursor: pointer;
+      color: var(--darker-grey);
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .editor-input .html-block-edit-btn:hover { background: var(--lighter-grey); }
+    }
+
+    .editor-input .html-block-code {
+      margin: var(--spacing-xs) 0 0;
+      padding: 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow: hidden;
+      max-height: 120px;
+      color: var(--dark-grey);
+      font-family: monospace;
+      font-size: 0.8rem;
+    }
+
+    .html-popover-wrapper { position: relative; display: inline-flex; }
+
+    .html-popover {
+      position: absolute;
+      top: calc(100% + var(--spacing-xs));
+      border: var(--border-card);
+      border-radius: var(--border-radius-overlay);
+      padding: var(--spacing-inset-xs);
+      box-shadow: 0 4px 15px var(--boxshadow-black);
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-inline-sm);
+      min-width: 300px;
+      z-index: var(--z-index-level-5);
+    }
+
+    @media (max-width: 767px) {
+      .html-popover-wrapper { position: static; }
+      .html-popover {
+        left: var(--spacing-inset-xs);
+        right: var(--spacing-inset-xs);
+        min-width: auto;
+      }
+    }
+
+    .html-input {
+      border: var(--border-input);
+      border-radius: var(--border-radius-input);
+      padding: var(--spacing-xs) var(--spacing-md);
+      outline: none;
+      font-family: monospace;
+      font-size: 0.8rem;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s;
+    }
+
+    .html-input:focus {
+      border: var(--border-input-focused);
+      box-shadow: var(--box-shadow-focus);
+    }
+
+    .html-popover-actions {
+      display: flex;
+      gap: var(--spacing-inline-sm);
+      justify-content: flex-end;
+    }
   `;
 
     constructor() {
@@ -270,6 +368,9 @@ export class OLMarkdownEditor extends LitElement {
         this.linkInputValue = '';
         this._errorMsg = null;
         this.showOverflowMenu = false;
+        this.showHtmlPopover = false;
+        this.htmlInputValue = '';
+        this._editingHtmlPos = null;
         this._handleDocumentClick = this._handleDocumentClick.bind(this);
     }
 
@@ -293,10 +394,11 @@ export class OLMarkdownEditor extends LitElement {
     }
 
     _handleDocumentClick(e) {
-        if (!this.showLinkPopover && !this.showOverflowMenu) return;
+        if (!this.showLinkPopover && !this.showOverflowMenu && !this.showHtmlPopover) return;
         if (!e.composedPath().includes(this)) {
             this.showLinkPopover = false;
             this.showOverflowMenu = false;
+            this.showHtmlPopover = false;
         }
     }
 
@@ -350,6 +452,15 @@ export class OLMarkdownEditor extends LitElement {
             onTransaction: () => {
                 this.requestUpdate();
             }
+        });
+
+        editorRoot.addEventListener('html-block-edit', (e) => {
+            this._editingHtmlPos = e.detail.pos;
+            this.htmlInputValue = e.detail.content;
+            this.showHtmlPopover = true;
+            this.showLinkPopover = false;
+            this.showOverflowMenu = false;
+            setTimeout(() => this.shadowRoot.querySelector('.html-input')?.focus(), 0);
         });
 
         this.targetElement.style.display = 'none';
@@ -408,6 +519,48 @@ export class OLMarkdownEditor extends LitElement {
         if (!this.editor) return;
         this.editor.chain().focus().extendMarkRange('link').unsetLink().run();
         this.showLinkPopover = false;
+    }
+
+    toggleHtmlPopover() {
+        if (!this.editor) return;
+        this.showHtmlPopover = !this.showHtmlPopover;
+        if (this.showHtmlPopover) {
+            this.showLinkPopover = false;
+            this.showOverflowMenu = false;
+            this._editingHtmlPos = null;
+            this.htmlInputValue = '';
+            setTimeout(() => this.shadowRoot.querySelector('.html-input')?.focus(), 0);
+        }
+    }
+
+    handleHtmlKeydown(e) {
+        if (e.key === 'Escape') { this.showHtmlPopover = false; this._focusEditor(); }
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); this.applyHtml(); }
+    }
+
+    applyHtml() {
+        if (!this.editor || !this.htmlInputValue.trim()) return;
+        if (this._editingHtmlPos !== null) {
+            this.editor.commands.updateHtmlBlock(this._editingHtmlPos, this.htmlInputValue);
+        } else {
+            this.editor.commands.setHtmlBlock(this.htmlInputValue);
+        }
+        this.showHtmlPopover = false;
+        this._editingHtmlPos = null;
+        this._focusEditor();
+    }
+
+    removeHtmlBlock() {
+        if (!this.editor || this._editingHtmlPos === null) return;
+        const pos = this._editingHtmlPos;
+        const node = this.editor.state.doc.nodeAt(pos);
+        if (node) {
+            this.editor.chain().focus()
+                .deleteRange({ from: pos, to: pos + node.nodeSize })
+                .run();
+        }
+        this.showHtmlPopover = false;
+        this._editingHtmlPos = null;
     }
 
     _isActive(type, options = {}) {
@@ -477,12 +630,32 @@ export class OLMarkdownEditor extends LitElement {
           ${this._renderButton({ title: 'Bullet List', icon: ICONS.ul, action: () => this.formatList('bullet'), isActive: this._isActive('bulletList') })}
           ${this._renderButton({ title: 'Numbered List', icon: ICONS.ol, action: () => this.formatList('number'), isActive: this._isActive('orderedList') })}
           <div class="toolbar-divider"></div>
+          <div class="html-popover-wrapper">
+            ${this._renderButton({ title: 'HTML Block', icon: ICONS.htmlBlock, action: this.toggleHtmlPopover.bind(this), isActive: this.showHtmlPopover })}
+            ${this.showHtmlPopover ? html`
+              <div class="html-popover" @mousedown="${(e) => e.stopPropagation()}">
+                <textarea
+                  class="html-input"
+                  placeholder='<img src="..." />'
+                  rows="4"
+                  .value="${this.htmlInputValue}"
+                  @input="${(e) => { this.htmlInputValue = e.target.value; }}"
+                  @keydown="${this.handleHtmlKeydown.bind(this)}"
+                ></textarea>
+                <div class="html-popover-actions">
+                  ${this._renderButton({ title: this._editingHtmlPos !== null ? 'Update HTML' : 'Insert HTML', icon: ICONS.save, action: this.applyHtml.bind(this) })}
+                  ${this._editingHtmlPos !== null ? this._renderButton({ title: 'Remove HTML Block', icon: ICONS.remove, action: this.removeHtmlBlock.bind(this), customColor: 'var(--red)' }) : ''}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+          <div class="toolbar-divider"></div>
           <span class="overflow-secondary">
             ${this._renderButton({ title: 'Blockquote', icon: ICONS.quote, action: this.formatQuote.bind(this), isActive: this._isActive('blockquote') })}
             ${this._renderButton({ title: 'Divider', icon: ICONS.hr, action: this.insertRule.bind(this) })}
           </span>
           <div class="overflow-menu-wrapper overflow-toggle">
-            ${this._renderButton({ title: 'More', icon: ICONS.more, action: () => { this.showOverflowMenu = !this.showOverflowMenu; if (this.showOverflowMenu) this.showLinkPopover = false; }, isActive: this.showOverflowMenu })}
+            ${this._renderButton({ title: 'More', icon: ICONS.more, action: () => { this.showOverflowMenu = !this.showOverflowMenu; if (this.showOverflowMenu) { this.showLinkPopover = false; this.showHtmlPopover = false; } }, isActive: this.showOverflowMenu })}
             ${this.showOverflowMenu ? html`
               <div class="overflow-menu" @mousedown="${(e) => e.stopPropagation()}">
                 ${secondaryButtons}

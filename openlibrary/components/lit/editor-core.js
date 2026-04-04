@@ -6,6 +6,7 @@ import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
 import Placeholder from '@tiptap/extension-placeholder';
+import { HTMLBlock } from './html-block-extension.js';
 
 /**
  * Creates a configured Tiptap editor instance.
@@ -28,7 +29,9 @@ export function createEditor({ element, content, placeholder, onUpdate, onTransa
                 link: { openOnClick: false, autolink: true },
                 strike: false
             }),
+            HTMLBlock,
             Markdown.configure({
+                html: true,
                 breaks: true,
                 linkify: true
             }),

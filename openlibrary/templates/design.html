@@ -331,6 +331,90 @@ This is a second paragraph with a [link](https://openlibrary.org).</textarea>
         </section>
 
         <section class="example">
+          <h3 class="example__title">$_("Mixed HTML and Markdown content")</h3>
+          <p>$_("Tests the editor with real-world content that mixes Markdown syntax with raw HTML tags (images, anchor-wrapped images, named anchors).")</p>
+          <div class="example__output">
+            <textarea id="demo-editor-html-mix" style="display:none;">Open Library lets you keep an inventory of books you find interesting.
+
+- [Tracking your books using your Reading Log](#reading-log)
+- [Creating themed lists of books](#lists)
+- [Submitting Community Reviews](/help/faq/reviews)
+
+
+## <a name="reading-log" id="reading-log">Reading Log</a>
+
+### Add a book to your Reading Log
+
+You can use your Reading Log to track books that you're currently reading, that you've already read, or that you want to read.
+
+<img src="https://archive.org/download/openlibrary-faqs/reading-log.gif"/>
+
+### Remove a book from your Reading Log
+
+A video tutorial is available [here](https://youtu.be/HMyz9Uf88X0):
+
+<a href="https://youtu.be/HMyz9Uf88X0"><img src="https://archive.org/download/screenshot-2023-05-18-at-12.59.28/Screenshot%202023-05-18%20at%2012.59.28.png"/></a>
+
+## <a name="lists" id="lists">Lists</a>
+
+You can also create Lists to organize books on custom themes or topics.
+
+### Creating new Lists
+
+A video tutorial is available [here](https://youtu.be/tnayoP3Djqo):
+
+<a href="https://youtu.be/tnayoP3Djqo"><img src="https://archive.org/download/openlibrary-faqs/openlibrary-create-list.png"/></a>
+
+In order to create a new list, you'll first have to find a book or author you'd like to be on the list. Let's assume you'd like to create a new list about Animal Books, starting with this book about Porcupines:
+
+[https://openlibrary.org/works/OL1989014W/Porcupines][3]
+
+Next, locate the green "Want to Read" button on the left side of the page, underneath the book cover.
+
+<img src="https://archive.org/download/openlibrary-faqs/reading-log-btn.png"/>
+
+Click the downward facing triangle to open the options menu.
+
+<img src="https://archive.org/download/openlibrary-faqs/create-lists-btn.png"/>
+
+Next click "Create a new list". You will get a dialog box asking for a list name and description and once you fill that in and click the "create new list" button you have both created the list AND added the book to the list. In the future that list will be available under the Add to List menu.
+
+<img src="https://archive.org/download/openlibrary-faqs/create-list-form.png"/>
+
+### Adding books to your Lists
+
+Next, locate the green "Want to Read" button on the left side of the page, underneath the book cover.
+
+<img src="https://archive.org/download/openlibrary-faqs/reading-log-btn.png"/>
+
+Click the downward facing triangle to open the options menu.
+
+<img src="https://archive.org/download/openlibrary-faqs/add-to-list.png"/>
+
+Upon success, you should see an indicator below the Want to Read button that the book has been added to the list:
+
+<img src="https://archive.org/download/openlibrary-faqs/add-to-list-success.png"/>
+
+You can click on the title of this indicator to see all the books in the list.
+
+<img src="https://archive.org/download/openlibrary-faqs/my-lists.png"/>
+
+Pro tip: If you select the "Use this work" checkbox, the work rather than the edition will be added to your list.
+
+## View your Reading Log & Lists
+
+You can visit https://openlibrary.org/account/books to view and manage all the books in your Reading Log and your Lists.
+
+<img src="https://archive.org/download/openlibrary-faqs/my-books.png"/>
+
+<a href="#top">Top</a>
+
+  [3]: https://openlibrary.org/works/OL1989014W/Porcupines</textarea>
+            <ol-markdown-editor target-id="demo-editor-html-mix"></ol-markdown-editor>
+          </div>
+        </section>
+
+        <section class="example">
           <h3 class="example__title">$_("Change event")</h3>
           <p>$:_("The editor fires an %(event)s event on every change. The raw Markdown string is available in %(detail)s.", event="<code>ol-markdown-editor-change</code>", detail="<code>event.detail.value</code>")</p>
           <pre class="example__code"><code class="language-html">&lt;ol-markdown-editor
