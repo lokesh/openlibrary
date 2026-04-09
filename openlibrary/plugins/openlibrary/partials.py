@@ -5,11 +5,11 @@ from typing import cast
 from urllib.parse import parse_qs
 
 import web
+from infogami.utils import delegate
+from infogami.utils.view import render_template
 from pydantic import BaseModel
 from typing_extensions import deprecated
 
-from infogami.utils import delegate
-from infogami.utils.view import render_template
 from openlibrary.accounts import get_current_user
 from openlibrary.core.fulltext import fulltext_search
 from openlibrary.core.lending import compose_ia_url, get_available

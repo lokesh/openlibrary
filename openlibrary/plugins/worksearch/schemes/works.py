@@ -6,11 +6,11 @@ from datetime import datetime
 from types import MappingProxyType
 from typing import Any, cast
 
+import infogami
 import luqum.tree
 import web
 from typing_extensions import deprecated
 
-import infogami
 from openlibrary.fastapi.models import SolrInternalsParams
 from openlibrary.plugins.upstream.utils import convert_iso_to_marc
 from openlibrary.plugins.worksearch.schemes import SearchScheme
