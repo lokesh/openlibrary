@@ -1,0 +1,110 @@
+/**
+ * List Books Grid
+ * ===============
+ * Grid layout for book lists (toggled via .list-books--grid class).
+ * Extracted from legacy.css. Used by search results, reading log,
+ * author pages, list views, etc.
+ *
+ * The grid view shows book covers with compact metadata (title, author, rating)
+ * below each cover, replacing the full details shown in list view.
+ */
+
+/* ---- Base list styles ---- */
+ul.list-books > li {
+  display: flex;
+}
+
+ul.list-books .resultTitle {
+  display: block;
+  margin: 0 !important;
+  font-family: var(--body-family);
+  color: var(--grey);
+}
+
+/* stylelint-disable-next-line selector-max-specificity */
+ul.list-books .resultTitle .bookauthor,
+ul.list-books span.resultPublisher {
+  font-size: 0.75em;
+  color: var(--grey);
+  font-family: var(--body-family);
+}
+
+ul.list-books span.resultPublisher {
+  display: block;
+}
+
+ul.list-books span.resultType {
+  font-size: 0.6875em;
+}
+
+/* ---- Grid layout ---- */
+.list-books--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-gap: 24px 16px;
+  padding: 10px;
+}
+
+.list-books--grid .searchResultItem {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  position: relative;
+}
+
+.list-books--grid .searchResultItem:not(.sri--w-main),
+.list-books--grid .searchResultItem .sri__main {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-books--grid .searchResultItem .bookcover {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin: 0;
+}
+
+/* Hide full details in grid view — compact metadata (.sri__grid-meta) is shown instead */
+/* stylelint-disable selector-max-specificity */
+.list-books--grid .searchResultItem > .details,
+.list-books--grid .searchResultItem .sri__main > .details {
+  display: none;
+}
+/* stylelint-enable selector-max-specificity */
+
+/* Hide feed-item header in grid view */
+.list-books--grid .searchResultItem .feed-item {
+  display: none;
+}
+
+.list-books--grid .searchResultItem .searchResultItemCTA {
+  font-size: 0.85em;
+  padding: 0;
+  margin: 0;
+  min-width: unset;
+  width: 100%;
+}
+
+.list-books--grid .searchResultItem .check-in-prompt,
+.list-books--grid .searchResultItem .star-rating-form {
+  display: none;
+}
+
+.list-books--grid .list-books__note {
+  overflow: hidden;
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: var(--border-divider);
+  line-height: var(--line-height-blurb);
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  -webkit-box-orient: vertical;
+}
+
+.list-books--grid .list-books__note p {
+  margin-top: 0;
+}

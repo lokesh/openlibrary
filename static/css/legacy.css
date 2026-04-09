@@ -38,7 +38,9 @@
 @import "components/mybooks-list.css";
 @import "components/mybooks-menu.css";
 @import "components/mybooks-details.css";
-@import "components/list-showcase.css";
+@import "components/list-card.css";
+@import "components/list-books-grid.css";
+@import "components/book-card.css";
 @import "components/mybooks.css";
 @import "components/readinglog-stats.css";
 @import "components/tagging-menu.css";
@@ -1391,113 +1393,7 @@ span.actions a span.checked-out {
 }
 
 /* openlibrary/templates/stats/readinglog.html */
-/* openlibrary/templates/type/author/view.html */
-/* openlibrary/templates/work_search.html */
-/* openlibrary/templates/books/check.html */
-/* openlibrary/templates/account/books.html */
-/* openlibrary/macros/FulltextResults.html */
-ul.list-books > li {
-  display: flex;
-}
-
-/* openlibrary/macros/SearchResultsWork.html */
-/* openlibrary/templates/books/check.html */
-/* openlibrary/templates/lists/preview.html */
-/* openlibrary/templates/lists/snippet.html */
-/* openlibrary/templates/type/list/embed.html */
-/* openlibrary/templates/type/list/view.html */
-ul.list-books .resultTitle {
-  display: block;
-  margin: 0 !important;
-  font-family: var(--body-family);
-  color: var(--grey);
-}
-
-/* `span.resultTitle .bookauthor` is used in: */
-/* * openlibrary/macros/SearchResultsWork.html */
-/* `span.resultPublisher` is used in */
-/* * openlibrary/macros/SearchResultsWork.htm */
-/* * openlibrary/templates/books/check.html */
-ul.list-books .resultTitle .bookauthor,
-ul.list-books span.resultPublisher {
-  font-size: 0.75em;
-  color: var(--grey);
-  font-family: var(--body-family);
-}
-
-/* openlibrary/templates/books/check.html */
-/* openlibrary/macros/SearchResultsWork.html */
-ul.list-books span.resultPublisher {
-  display: block;
-}
-
-/* openlibrary/templates/books/show.html */
-ul.list-books span.resultType {
-  font-size: 0.6875em;
-}
-
-.list-books--grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  grid-gap: 30px 5px;
-  padding: 10px;
-}
-
-.list-books--grid .searchResultItem {
-  padding: 0 5px;
-  background: transparent;
-  border: 0;
-  position: relative;
-}
-
-.list-books--grid .searchResultItem:not(.sri--w-main),
-.list-books--grid .searchResultItem .sri__main {
-  display: flex;
-  flex-direction: column;
-}
-
-.list-books--grid .searchResultItem .bookcover {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  margin: 0;
-}
-
-.list-books--grid .searchResultItem > .details,
-.list-books--grid .searchResultItem .sri__main > .details {
-  display: none;
-}
-
-.list-books--grid .searchResultItem .searchResultItemCTA {
-  font-size: 0.85em;
-  padding: 0;
-  margin: 0;
-  min-width: unset;
-  width: 100%;
-}
-
-.list-books--grid .searchResultItem .check-in-prompt,
-.list-books--grid .searchResultItem .star-rating-form {
-  display: none;
-}
-
-.list-books--grid .list-books__note {
-  overflow: hidden;
-  padding-top: 8px;
-  margin-top: 4px;
-  border-top: var(--border-divider);
-  line-height: var(--line-height-blurb);
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  line-clamp: 6;
-  -webkit-box-orient: vertical;
-}
-
-.list-books--grid .list-books__note p {
-  margin-top: 0;
-}
+/* list-books and list-books--grid styles moved to components/list-books-grid.css */
 
 /* openlibrary/templates/covers/add.html */
 div.popAlert {

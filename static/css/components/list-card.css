@@ -1,0 +1,266 @@
+/**
+ * List Card
+ * =========
+ * Unified component for displaying list preview cards.
+ * Replaces the duplicated list-showcase.css and list-follow.css.
+ *
+ * Base classes:
+ *   .list-card-showcase  — horizontal scrolling container
+ *   .list-card           — individual card (215x150, beige)
+ *
+ * Variants:
+ *   (default)            — simple card with covers + title + count
+ *   .list-card--follow   — card with user avatar + follow button
+ */
+
+/* ---- Card base ---- */
+.list-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--beige);
+  width: 215px;
+  height: 150px;
+  border: 1px solid hsla(0, 0%, 0%, 0.25);
+  border-radius: var(--border-radius-card);
+  box-shadow: 2px 2px 4px hsla(0, 0%, 0%, 0.15);
+}
+
+a.list-card {
+  text-decoration: none;
+}
+
+/* ---- Showcase container (shared) ---- */
+.list-card-showcase {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding: 8px 0;
+}
+
+.list-card-showcase .list-card {
+  margin-right: 24px;
+  flex-shrink: 0;
+}
+
+.list-card-showcase__see-all {
+  margin-right: 24px;
+  align-self: center;
+  width: auto;
+}
+
+/* ---- Overlapping book covers ---- */
+.list-card__covers {
+  flex: 1;
+  min-height: 1px; /* fallback */
+  overflow: clip;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.list-card__covers img {
+  width: 64px;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 hsla(0, 0%, 0%, 0.25);
+}
+
+/* @overlap: 8.5px */
+.list-card__covers img:nth-child(1) {
+  z-index: var(--z-index-level-3);
+  transform: translate(0, 20px);
+}
+
+.list-card__covers img:nth-child(2) {
+  z-index: var(--z-index-level-2);
+  transform: translate(-8.5px, 20px);
+}
+
+.list-card__covers img:nth-child(3) {
+  z-index: var(--z-index-level-1);
+  transform: translate(-17px, 20px);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.list-card img {
+  transition: scale 0.2s;
+}
+
+.list-card:hover img {
+  scale: 1.05;
+}
+
+/* ---- Name tag (bottom bar) ---- */
+.list-card__name-tag {
+  background: var(--grey-f4f4f4);
+  padding: 7px 10px;
+  border-radius: 0 0 var(--border-radius-card) var(--border-radius-card);
+  box-shadow: 0 0 4px hsla(0, 0%, 0%, 0.25);
+}
+
+.list-card__title {
+  font-weight: bold;
+  font-size: var(--font-size-label-large);
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-card__num-books {
+  color: var(--grey-555);
+  font-size: var(--font-size-label-medium);
+}
+
+/* =============================================
+   FOLLOW VARIANT (.list-card--follow)
+   ============================================= */
+
+.list-card--follow .list-card__header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 7px 10px;
+  width: 100%;
+  text-decoration: none;
+}
+
+/* Override title for centered layout in follow cards */
+.list-card--follow .list-card__title {
+  width: 100%;
+  max-height: 2.8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4em;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+a.list-card--follow .list-card__covers {
+  text-decoration: none;
+}
+
+/* ---- Bottom bar with user info ---- */
+.list-card__bottom {
+  background: var(--grey-f4f4f4);
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  gap: 0.5em;
+  width: 100%;
+  border-radius: 0 0 var(--border-radius-card) var(--border-radius-card);
+}
+
+.list-card__user {
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-label-medium);
+  padding-left: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.list-card__user img {
+  border-radius: var(--border-radius-thumbnail);
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+  margin-top: -10px;
+  position: relative;
+  z-index: var(--z-index-level-3);
+  border: 2px solid var(--white);
+  flex-shrink: 0;
+}
+
+.list-card__username {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  padding-bottom: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+a.list-card__username-link {
+  text-decoration: none;
+  color: var(--dark-grey-two);
+  padding-bottom: 5px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+  display: inline-block;
+  position: relative;
+  top: 0.2rem;
+}
+
+/* ---- Follow button ---- */
+.list-card__follow-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 5px;
+  padding-bottom: 3px;
+}
+
+.list-card__follow-button .cta-btn {
+  font-size: var(--font-size-label-medium);
+  padding: 1px 10px;
+  border-radius: 4px;
+  box-shadow: none;
+  margin: 0;
+}
+
+.list-card__private-button {
+  background-color: var(--grey);
+  border: none;
+  cursor: not-allowed;
+  pointer-events: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1px;
+  border-radius: 4px;
+}
+
+.list-card__private-button .pvt-text {
+  color: var(--white);
+  font-size: 12px;
+  padding: 2px 4px;
+  box-shadow: none;
+  margin: 0;
+  letter-spacing: 0.2px;
+  margin-top: 1px;
+}
+
+.list-card__private-button .pvt-icon {
+  color: var(--white);
+  font-size: 14px;
+}
+
+/* ---- Community label variant ---- */
+.list-card__bottom--community {
+  background: var(--grey-f4f4f4);
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  margin-bottom: -3px;
+  border-radius: 0 0 3px 3px;
+}
+
+.list-card__community-label {
+  font-weight: normal;
+  font-size: var(--font-size-label-large);
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  padding-bottom: 2px;
+}

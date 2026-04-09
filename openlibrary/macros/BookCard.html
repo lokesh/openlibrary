@@ -1,0 +1,199 @@
+$def with (doc, variant="full", lazy=False, seq_index=None, analytics_key="", show_rating=True, show_cta=True, secondary_action=False, include_dropper=False, blur=False)
+$# BookCard: Unified book display component with three variants.
+$#
+$# Variants:
+$#   "cover"   - Cover image only + optional CTA (for carousels)
+$#   "compact" - Cover + title + author + rating (for grids, modernized carousels)
+$#   "full"    - All metadata (for search results, reading log list view)
+$#              Note: "full" variant is handled by SearchResultsWork which provides
+$#              the complete feature set (highlighting, feed items, librarian extras, etc.)
+$#
+$# Parameters:
+$#   doc             - Work, Edition, or Solr dict
+$#   variant         - "cover", "compact", or "full"
+$#   lazy            - Whether to lazy-load the cover image
+$#   seq_index       - Sequence index (for lazy loading threshold)
+$#   analytics_key   - Key for analytics tracking
+$#   show_rating     - Whether to show star rating (compact/full)
+$#   show_cta        - Whether to show lending CTA button
+$#   secondary_action - Whether to show preview/search inside
+$#   include_dropper - Whether to show my-books dropdown
+$#   blur            - Whether to blur cover (content warnings)
+
+$code:
+  fallback_cover = '/images/icons/avatar_book-sm.png'
+  cover_host = '//covers.openlibrary.org'
+
+  # --- Document type detection ---
+  doc_type = (
+    'infogami_work' if doc.get('type', {}).get('key') == '/type/work' else
+    'infogami_edition' if doc.get('type', {}).get('key') == '/type/edition' else
+    'solr_work' if not doc.get('editions') else
+    'solr_edition'
+  )
+
+  editions = doc.get('editions') or []
+  if isinstance(editions, dict):
+    editions = editions.get('docs') or []
+
+  selected_ed = doc
+  if doc_type == 'solr_edition' and editions:
+    selected_ed = editions[0]
+
+  # --- URL construction ---
+  if doc_type.startswith('infogami_'):
+    book_url = doc.url()
+  else:
+    book_url = doc.key + '/' + urlsafe(doc.get('title', '-'))
+
+  if doc_type == 'solr_edition':
+    work_edition_url = book_url + '?edition=' + urlquote('key:' + selected_ed['key'])
+  else:
+    book_provider = get_book_provider(doc)
+    if book_provider and doc_type.endswith('_work'):
+      work_edition_url = book_url + '?edition=' + urlquote(book_provider.get_best_identifier_slug(doc))
+    else:
+      work_edition_url = book_url
+
+  # --- Cover URL ---
+  cover_url = get_cover_url(selected_ed) if variant != 'cover' else None
+
+  if variant == 'cover':
+    cover_id = selected_ed.get('cover_id') or selected_ed.get('cover_i') or (selected_ed.get('covers') and selected_ed['covers'][0])
+    if selected_ed.get('cover_url'):
+      cover_url = selected_ed.get('cover_url')
+    elif cover_id and cover_id != -1:
+      cover_url = '%s/b/id/%s-M.jpg' % (cover_host, cover_id)
+    elif selected_ed.get('ia'):
+      cover_url = '%s/b/ia/%s-M.jpg?default=%s' % (cover_host, selected_ed.get('ia')[0], fallback_cover)
+    elif selected_ed.get('cover_edition_key'):
+      cover_url = '%s/b/olid/%s-M.jpg' % (cover_host, selected_ed.get('cover_edition_key'))
+
+  if not cover_url:
+    cover_url = False
+
+  # --- Title & authors ---
+  title = selected_ed.get('title', '') or doc.get('title', '')
+  subtitle = selected_ed.get('subtitle') or doc.get('subtitle')
+  full_title = title + (': ' + subtitle if subtitle else '')
+
+  authors = None
+  if doc_type == 'infogami_work':
+    authors = doc.get_authors()
+  elif doc_type == 'infogami_edition':
+    edition_work = doc.get('works', [None])[0] if 'works' in doc else None
+    authors = (edition_work.get_authors() if edition_work else doc.get_authors()) if hasattr(doc, 'get_authors') else None
+  elif doc_type.startswith('solr_'):
+    if 'authors' in doc:
+      authors = doc['authors']
+    elif 'author_key' in doc:
+      authors = [{'key': '/authors/' + key, 'name': name} for key, name in zip(doc['author_key'], doc['author_name'])]
+
+  if authors:
+    author_data = [
+      {
+        'name': a.get('name') or a.get('author', {}).get('name'),
+        'url': (a.get('url') or a.get('key') or a.get('author', {}).get('url') or a.get('author', {}).get('key'))
+      }
+      for a in authors
+    ]
+    author_names = [a['name'] for a in author_data if a.get('name')]
+  else:
+    author_data = []
+    author_names = []
+
+  byline = ', '.join(author_names[:3]) if author_names else ''
+
+  # --- Rating ---
+  ratings_count = doc.get('ratings_count', None)
+  ratings_avg = doc.get('ratings_average', None)
+
+  # --- Availability ---
+  selected_ed['availability'] = selected_ed.get('availability', {}) or doc.get('availability', {}) or {}
+  ocaid = (selected_ed.get('ia') and selected_ed['ia'][0]) or selected_ed.get('ocaid')
+  work_key = doc['key'] if doc['key'].startswith('/work') else doc.get('work_key')
+
+  # --- Lazy loading ---
+  should_lazy = lazy or (seq_index is not None and seq_index > 3)
+
+  # --- Blur ---
+  blur_class = 'book-card--blur' if blur else ''
+
+$if variant == 'cover':
+  $# ===== COVER VARIANT =====
+  $# Minimal: cover image + optional CTA. Used in carousels.
+  <div class="book-card book-card--cover $blur_class">
+    <a class="book-card__cover" href="$work_edition_url" data-ol-link-track="BookCard|CoverClick|$analytics_key">
+      $if cover_url:
+        <img class="book-card__cover-img"
+          loading="$cond(should_lazy, 'lazy', 'eager')"
+          title="$full_title$cond(byline, ' by ' + byline, '')"
+          alt="$_('Cover of: %(title)s', title=full_title)"
+          $if should_lazy:
+            data-lazy="$cover_url"
+          src="$cond(should_lazy, 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', cover_url)"
+        />
+      $else:
+        <div class="book-card__blank-cover" title="$full_title">
+          <div class="book-card__blank-title">$:macros.TruncateString(title, 70)</div>
+          $if author_names:
+            <div class="book-card__blank-author">$:macros.TruncateString(byline, 30)</div>
+        </div>
+    </a>
+    $if show_cta:
+      $:macros.LoanStatus(selected_ed, work_key=work_key, listen=False, secondary_action=secondary_action, analytics_override="BookCard|CTAClick|%s" % analytics_key)
+  </div>
+
+$elif variant == 'compact':
+  $# ===== COMPACT VARIANT =====
+  $# Cover + title + author + optional rating. For grids and enhanced carousels.
+  <div class="book-card book-card--compact $blur_class" itemscope itemtype="https://schema.org/Book">
+    <a class="book-card__cover" href="$work_edition_url" data-ol-link-track="BookCard|CoverClick|$analytics_key">
+      $if cover_url:
+        <img class="book-card__cover-img" itemprop="image"
+          loading="$cond(should_lazy, 'lazy', 'eager')"
+          alt="$_('Cover of: %(title)s', title=full_title)"
+          src="$cond(should_lazy, fallback_cover, cover_url)"
+          $if should_lazy:
+            data-lazy="$cover_url"
+        />
+      $else:
+        <div class="book-card__blank-cover" title="$full_title">
+          <div class="book-card__blank-title">$:macros.TruncateString(title, 50)</div>
+          $if author_names:
+            <div class="book-card__blank-author">$:macros.TruncateString(byline, 30)</div>
+        </div>
+    </a>
+    <div class="book-card__meta">
+      <a class="book-card__title" href="$work_edition_url" itemprop="url">
+        <span itemprop="name">$:macros.TruncateString(full_title, 60)</span>
+      </a>
+      $if author_data:
+        <div class="book-card__author" itemprop="author">
+          $:macros.TruncateString(byline, 40)
+        </div>
+      $else:
+        <div class="book-card__author book-card__author--unknown">$_('Unknown author')</div>
+      $if show_rating and ratings_avg:
+        <div class="book-card__rating">
+          $:macros.StarRatingsComponent(ratings_count, ratings_avg, 'book_card')
+        </div>
+    </div>
+    $if show_cta:
+      <div class="book-card__cta">
+        $:macros.LoanStatus(selected_ed, work_key=work_key, listen=False, secondary_action=secondary_action, analytics_override="BookCard|CTAClick|%s" % analytics_key)
+      </div>
+    $if include_dropper:
+      <div class="book-card__dropper">
+        $ edition_key = None
+        $if doc_type == 'solr_edition':
+          $ edition_key = selected_ed['key']
+        $elif doc_type == 'infogami_edition':
+          $ edition_key = doc.key
+        $elif doc_type == 'solr_work':
+          $ edition_key = doc.get('edition_key') and doc.get("edition_key")[0]
+          $ edition_key = '/books/%s' % edition_key if edition_key else None
+        $if edition_key:
+          $:render_template('my_books/dropper', doc, edition_key=edition_key, async_load=True)
+      </div>
+  </div>

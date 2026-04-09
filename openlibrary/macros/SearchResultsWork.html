@@ -52,6 +52,28 @@ $code:
   else:
     full_work_title = doc.get('title', '') + (': ' + doc['subtitle'] if doc.get('subtitle') else '')
 
+  # Pre-compute author_data and ratings for use in both full and grid-compact views
+  _authors = None
+  if doc_type == 'infogami_work':
+    _authors = doc.get_authors()
+  elif doc_type == 'infogami_edition':
+    _authors = edition_work.get_authors() if edition_work else doc.get_authors()
+  elif doc_type.startswith('solr_'):
+    if 'authors' in doc:
+      _authors = doc['authors']
+    elif 'author_key' in doc:
+      _authors = [{'key': '/authors/' + key, 'name': name} for key, name in zip(doc['author_key'], doc['author_name'])]
+
+  author_data = [
+    {
+      'name': a.get('name') or a.get('author', {}).get('name'),
+      'url': (a.get('url') or a.get('key') or a.get('author', {}).get('url') or a.get('author', {}).get('key'))
+    }
+    for a in (_authors or [])
+  ]
+  ratings_avg = doc.get('ratings_average', None)
+  ratings_count = doc.get('ratings_count', None)
+
 <li class="searchResultItem sri--w-main" itemscope itemtype="https://schema.org/Book" $:attrs>
   $ blur_cover = "bookcover--blur" if blur else ""
   $if 'log' in doc:
@@ -99,32 +121,12 @@ $code:
           </h3>
         </div>
         <span itemprop="author" itemscope itemtype="https://schema.org/Organization" class="bookauthor">
-          $ authors = None
-          $if doc_type == 'infogami_work':
-            $ authors = doc.get_authors()
-          $elif doc_type == 'infogami_edition':
-            $ authors = edition_work.get_authors() if edition_work else doc.get_authors()
-          $elif doc_type.startswith('solr_'):
-            $if 'authors' in doc:
-              $ authors = doc['authors']
-            $elif 'author_key' in doc:
-              $ authors = [ { 'key': '/authors/' + key, 'name': name } for key, name in zip(doc['author_key'], doc['author_name']) ]
-          $if not authors:
+          $if not author_data:
             <em>$_('Unknown author')</em>
           $else:
-            $code:
-              author_data = [
-                {
-                  'name': a.get('name') or a.get('author', {}).get('name'),
-                  'url': (a.get('url') or a.get('key') or a.get('author', {}).get('url') or a.get('author', {}).get('key'))
-                }
-                for a in authors
-              ]
             $:macros.BookByline(author_data, limit=max_rendered_authors, overflow_url=work_edition_url)
         </span>
         <span class="resultStats">
-          $ ratings_count = doc.get('ratings_count', None)
-          $ ratings_avg = doc.get('ratings_average', None)
           $ want_to_read_count = doc.get('want_to_read_count', None)
           $:macros.StarRatingsByline(ratings_count, ratings_avg, want_to_read_count)
           $if show_librarian_extras and doc.get('trending_z_score') is not None:
@@ -210,6 +212,21 @@ $code:
           </div>
         $if extra:
           $:extra
+    </div>
+
+    $# Compact metadata for grid view — hidden in list view, visible in grid
+    <div class="sri__grid-meta">
+      <a class="sri__grid-title" href="$work_edition_url">$:macros.TruncateString(full_title, 60)</a>
+      <div class="sri__grid-author">
+        $if author_data:
+          $:macros.TruncateString(', '.join([a['name'] for a in author_data[:3] if a.get('name')]), 40)
+        $else:
+          <em>$_('Unknown author')</em>
+      </div>
+      $if ratings_avg:
+        <div class="sri__grid-rating">
+          $:macros.StarRatingsComponent(ratings_count, ratings_avg, 'book_card')
+        </div>
     </div>
 
     <div class="searchResultItemCTA">

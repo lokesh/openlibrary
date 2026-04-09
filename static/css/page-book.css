@@ -42,6 +42,7 @@
 @import "components/read-panel.css";
 @import "components/work.css";
 @import "components/book.css";
+@import "components/book-card.css";
 @import "components/carousel.css";
 @import "components/category-item.css";
 @import "components/loading-indicator.css";
@@ -54,7 +55,7 @@
 @import "components/toc.css";
 @import "components/observationStats.css";
 @import "components/modal-links.css";
-@import "components/list-follow.css";
+@import "components/list-card.css";
 @import "components/tagging-menu.css";
 @import "components/check-in.css";
 @import "components/reading-goal.css";

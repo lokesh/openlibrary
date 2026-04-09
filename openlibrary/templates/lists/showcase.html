@@ -28,7 +28,7 @@ $def list_card(list):
             <a href="/people/$username/lists">$_('My Lists (%(count)d)', count=len(lists))</a>
         </h2>
     </div>
-    <div class="list-showcase">
+    <div class="list-card-showcase">
         $if lists:
             $ displayed_lists = 5
             $for list in lists[:displayed_lists]
@@ -36,7 +36,7 @@ $def list_card(list):
 
             $if len(lists) > displayed_lists:
                 <a
-                    class="list-showcase__see-all cta-btn cta-btn--vanilla"
+                    class="list-card-showcase__see-all cta-btn cta-btn--vanilla"
                     href="/people/$username/lists"
                 >$_("See all")</a>
         $else:

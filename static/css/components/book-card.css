@@ -1,0 +1,207 @@
+/**
+ * Book Card
+ * =========
+ * Unified component for displaying books across the site.
+ *
+ * Variants:
+ *   .book-card--cover   : Cover-only (carousels)
+ *   .book-card--compact : Cover + title + author + rating (grids, enhanced carousels)
+ *
+ * The "full" variant for search results/reading log is still handled by
+ * .searchResultItem in search-result-item.css (to be migrated later).
+ */
+
+/* ---- Base ---- */
+.book-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---- Cover ---- */
+.book-card__cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: var(--border-radius-thumbnail);
+}
+
+.book-card__cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius-thumbnail);
+  box-shadow: 0 2px 8px hsla(0, 0%, 0%, 0.15);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.book-card__cover:hover .book-card__cover-img {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px hsla(0, 0%, 0%, 0.25);
+}
+
+/* ---- Blur (content warnings) ---- */
+/* stylelint-disable-next-line no-descending-specificity */
+.book-card--blur .book-card__cover-img {
+  filter: blur(4px);
+}
+
+/* ---- Blank cover fallback ---- */
+.book-card__blank-cover {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+  background: var(--lighter-grey);
+  border-radius: var(--border-radius-thumbnail);
+  box-shadow: 0 2px 8px hsla(0, 0%, 0%, 0.15);
+  position: relative;
+}
+
+/* Inner border on blank covers */
+.book-card__blank-cover::before {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 8px;
+  border: 2px solid hsla(0, 0%, 100%, 0.5);
+  pointer-events: none;
+}
+
+.book-card__blank-title {
+  font-size: var(--font-size-body-medium);
+  font-weight: 600;
+  color: var(--dark-grey);
+  line-height: 1.3;
+  position: relative;
+}
+
+.book-card__blank-author {
+  font-size: var(--font-size-label-medium);
+  font-style: italic;
+  color: var(--dark-grey-two);
+  margin-top: 4px;
+  position: relative;
+}
+
+/* ---- Metadata block (compact variant) ---- */
+.book-card__meta {
+  padding: 8px 2px 0;
+  min-height: 0;
+}
+
+.book-card__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  font-family: var(--font-family-title);
+  font-size: var(--font-size-body-medium);
+  font-weight: 600;
+  line-height: var(--line-height-heading);
+  color: var(--dark-grey);
+  text-decoration: none;
+}
+
+.book-card__title:hover {
+  color: var(--link-blue);
+}
+
+.book-card__author {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  font-size: var(--font-size-label-medium);
+  color: var(--grey-555);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.book-card__author--unknown {
+  font-style: italic;
+}
+
+.book-card__rating {
+  margin-top: 4px;
+  font-size: var(--font-size-label-medium);
+  line-height: 1;
+}
+
+/* Slightly smaller stars in the compact card context */
+.book-card__rating .star-rating-star {
+  width: 12px;
+  height: 12px;
+}
+
+/* ---- CTA / Lending buttons ---- */
+.book-card__cta {
+  margin-top: 6px;
+  font-size: var(--font-size-label-medium);
+}
+
+.book-card__cta .cta-btn {
+  font-size: var(--font-size-label-medium);
+  padding: 4px 8px;
+  width: 100%;
+}
+
+.book-card__dropper {
+  margin-top: 4px;
+}
+
+/* =============================================
+   COVER VARIANT — used inside .carousel
+   ============================================= */
+.book-card--cover {
+  /* Inherits from .carousel__item sizing via parent */
+}
+
+.book-card--cover .book-card__cover {
+  height: 200px;
+  aspect-ratio: auto;
+}
+
+.carousel--compact .book-card--cover .book-card__cover {
+  height: 125px;
+}
+
+/* =============================================
+   COMPACT VARIANT — used in grids
+   ============================================= */
+.book-card--compact {
+  /* Fills grid cell naturally */
+}
+
+/* =============================================
+   Grid container for book cards
+   ============================================= */
+.book-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 24px 16px;
+  padding: 10px 0;
+}
+
+/* =============================================
+   Integration: book-card inside existing .carousel
+   ============================================= */
+.carousel .book-card--cover {
+  min-height: 1px;
+}
+
+.carousel.carousel--grid .book-card--compact {
+  margin: 0;
+}
