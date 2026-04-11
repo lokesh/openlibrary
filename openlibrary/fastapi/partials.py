@@ -22,6 +22,7 @@ from openlibrary.plugins.openlibrary.partials import (
     MyBooksDropperListsPartial,
     ReadingGoalProgressPartial,
     SearchFacetsPartial,
+    SearchResultsPartial,
 )
 
 router = APIRouter()
@@ -49,6 +50,36 @@ async def search_facets_partial(
         raise HTTPException(status_code=400, detail="Invalid JSON in data parameter")
 
     return await SearchFacetsPartial(data=parsed_data, sfw=sfw == "yes").generate_async()
+
+
+@router.get("/partials/SearchResults.json", include_in_schema=SHOW_PARTIALS_IN_SCHEMA)
+async def search_results_partial(
+    data: Annotated[str, Query(description="JSON-encoded search parameters")],
+    sfw: Annotated[str | None, Cookie()] = None,
+) -> dict:
+    """
+    Get search results HTML fragment for AJAX pagination.
+
+    The data parameter should contain:
+    - param: dict with search parameters (q, sort, facets, etc.)
+    - page: int (1-indexed page number)
+    - rows: int (results per page, default 20)
+    """
+    try:
+        parsed_data = json.loads(data)
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON in data parameter")
+
+    param = parsed_data.get("param", {})
+    page = parsed_data.get("page", 1)
+    rows = parsed_data.get("rows", 20)
+
+    return await SearchResultsPartial(
+        param=param,
+        page=page,
+        rows=rows,
+        sfw=(sfw == "yes"),
+    ).generate_async()
 
 
 @router.get("/partials/AffiliateLinks.json", include_in_schema=SHOW_PARTIALS_IN_SCHEMA)

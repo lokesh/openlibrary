@@ -8,11 +8,17 @@ from pydantic import BaseModel
 from infogami.utils.view import render_template
 from openlibrary.accounts import get_current_user
 from openlibrary.core.fulltext import fulltext_search_async
-from openlibrary.core.lending import compose_ia_url, get_available
+from openlibrary.core.lending import add_availability, compose_ia_url, get_available
 from openlibrary.i18n import gettext as _
 from openlibrary.plugins.openlibrary.lists import get_lists_async, get_user_lists
+from openlibrary.plugins.upstream.mybooks import add_read_statuses
 from openlibrary.plugins.upstream.yearly_reading_goals import get_reading_goals
-from openlibrary.plugins.worksearch.code import do_search_async, work_search
+from openlibrary.plugins.worksearch.code import (
+    do_search_async,
+    get_doc,
+    get_remembered_layout,
+    work_search,
+)
 from openlibrary.plugins.worksearch.subjects import (
     date_range_to_publish_year_filter,
     get_subject,
@@ -260,6 +266,73 @@ class SearchFacetsPartial(PartialDataHandler):
             "sidebar": str(sidebar),
             "title": active_facets.title,
             "activeFacets": str(active_facets).strip(),
+        }
+
+
+class SearchResultsPartial(PartialDataHandler):
+    """Handler for search results HTML fragment (AJAX pagination)."""
+
+    def __init__(self, param: dict, page: int = 1, rows: int = 20, sfw: bool = False):
+        self.param = param
+        self.page = page
+        self.rows = rows
+        self.sfw = sfw
+
+    def generate(self) -> dict:
+        raise NotImplementedError("Use generate_async instead")
+
+    async def generate_async(self) -> dict:
+        param = self.param
+        sort = param.get('sort')
+
+        search_response = await do_search_async(
+            param,
+            sort,
+            self.page,
+            rows=self.rows,
+            highlight=True,
+            spellcheck_count=3,
+            request_label='BOOK_SEARCH',
+            sfw=self.sfw,
+        )
+
+        if search_response.error or not search_response.docs:
+            return {
+                "results": "",
+                "numFound": 0,
+                "title": "",
+            }
+
+        works = [get_doc(d) for d in search_response.docs]
+        add_availability([(w.get('editions') or [None])[0] or w for w in works])
+
+        user = get_current_user()
+        username = user and user.key.split('/')[-1]
+        if username:
+            works = add_read_statuses(username, works)
+
+        show_librarian_extras = user and (user.is_admin() or user.is_librarian())
+        subject_keys = [d.get('subject', []) for d in search_response.docs]
+        layout = get_remembered_layout()
+
+        results_html = render_template(
+            'search/work_search_results',
+            works,
+            subject_keys,
+            search_response,
+            self.page,
+            self.rows,
+            layout,
+            show_librarian_extras,
+        )
+
+        q = param.get('q', '')
+        title = f"Search results for {q}" if q else "Search results"
+
+        return {
+            "results": str(results_html),
+            "numFound": search_response.num_found,
+            "title": title,
         }
 
 

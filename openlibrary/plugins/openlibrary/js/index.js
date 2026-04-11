@@ -316,9 +316,13 @@ jQuery(function () {
     }
 
     const searchFacets = document.getElementById('searchFacets')
-    if (searchFacets) {
+    const resultsContainer = document.querySelector('.resultsContainer')
+    if (searchFacets || resultsContainer) {
         import(/* webpackChunkName: "search" */ './search')
-            .then((module) => module.initSearchFacets(searchFacets));
+            .then((module) => {
+                if (searchFacets) module.initSearchFacets(searchFacets);
+                if (resultsContainer) module.initAjaxPagination(resultsContainer);
+            });
     }
 
     // Conditionally load Integrated Librarian Environment

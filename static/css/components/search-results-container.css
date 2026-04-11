@@ -8,3 +8,20 @@
     display: flex;
   }
 }
+
+.search-results--loading {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.search-results-error {
+  padding: 20px;
+  text-align: center;
+}
+
+.search-results-error__retry {
+  margin-top: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
