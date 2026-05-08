@@ -1750,7 +1750,7 @@ msgstr ""
 
 #: ProlificAuthors.html account/loans.html authors/index.html
 #: lists/list_follow.html lists/showcase.html publishers/view.html
-#: search/authors.html search/publishers.html search/subjects.html
+#: search/authors.html search/publishers.html
 #, python-format
 msgid "%(count)d book"
 msgid_plural "%(count)d books"
@@ -2851,8 +2851,8 @@ msgstr ""
 
 #: RelatedSubjects.html SubjectTags.html admin/menu.html
 #: admin/people/index.html admin/people/view.html
-#: openlibrary/plugins/worksearch/code.py type/author/view.html
-#: type/list/view_body.html
+#: openlibrary/plugins/worksearch/code.py search/subjects.html
+#: type/author/view.html type/list/view_body.html
 msgid "People"
 msgstr ""
 
@@ -5465,7 +5465,8 @@ msgstr ""
 
 #: RelatedSubjects.html SearchNavigation.html SubjectTags.html
 #: lib/nav_foot.html lib/nav_head.html openlibrary/plugins/worksearch/code.py
-#: subjects/notfound.html type/author/view.html type/list/view_body.html
+#: search/subjects.html subjects/notfound.html type/author/view.html
+#: type/list/view_body.html
 msgid "Subjects"
 msgstr ""
 
@@ -6796,32 +6797,26 @@ msgstr ""
 msgid "No <strong>subjects</strong> directly matched your search"
 msgstr ""
 
-#: search/subjects.html
-msgid "time"
+#: RelatedSubjects.html SubjectTags.html openlibrary/plugins/worksearch/code.py
+#: search/subjects.html type/author/view.html type/list/view_body.html
+msgid "Places"
+msgstr ""
+
+#: RelatedSubjects.html SubjectTags.html openlibrary/plugins/worksearch/code.py
+#: search/subjects.html type/list/view_body.html
+msgid "Times"
 msgstr ""
 
 #: search/subjects.html
-msgid "subject"
+msgid "Organizations"
 msgstr ""
 
 #: search/subjects.html
-msgid "place"
+msgid "Events"
 msgstr ""
 
 #: search/subjects.html
-msgid "org"
-msgstr ""
-
-#: search/subjects.html
-msgid "event"
-msgstr ""
-
-#: search/subjects.html
-msgid "person"
-msgstr ""
-
-#: search/subjects.html
-msgid "work"
+msgid "Works"
 msgstr ""
 
 #: search/work_search_facets.html
@@ -7129,11 +7124,6 @@ msgstr ""
 #: type/author/view.html
 #, python-format
 msgid "— Show <a href=\"%(url)s\">everything</a> by this author?"
-msgstr ""
-
-#: RelatedSubjects.html SubjectTags.html openlibrary/plugins/worksearch/code.py
-#: type/author/view.html type/list/view_body.html
-msgid "Places"
 msgstr ""
 
 #: Profile.html type/author/view.html
@@ -7596,11 +7586,6 @@ msgstr ""
 
 #: type/list/view_body.html
 msgid "Derived from seed metadata"
-msgstr ""
-
-#: RelatedSubjects.html SubjectTags.html openlibrary/plugins/worksearch/code.py
-#: type/list/view_body.html
-msgid "Times"
 msgstr ""
 
 #: type/local_id/view.html

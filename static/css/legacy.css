@@ -924,8 +924,15 @@ div#searchResults .SRPCoverBlank a {
 /* openlibrary/templates/publishers/view.html */
 /* openlibrary/templates/search/publishers.html */
 /* openlibrary/templates/search/subjects.html */
-.subjectList ul {
-  margin-top: 30px;
+.subjectList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-stack-md);
+  margin-top: var(--spacing-stack-md);
+}
+
+.subjectList__group h3 {
+  margin: 0 0 var(--spacing-stack-xs);
 }
 
 /* SEARCH FACETS */

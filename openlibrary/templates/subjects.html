@@ -44,12 +44,10 @@ $ q = query_param('q')
     $if 'disambiguations' in page:
         <div class="disambiguations">
             <h3>$_("Disambiguations")</h3>
-            <ul>
+            <ol-chip-group gap="small">
                 $for i in page.disambiguations:
-                    <li>
-                        <a href="$i.subject_key">$i.name ($i.tag_type)</a>
-                    </li>
-            </ul>
+                    <ol-chip size="small" href="$i.subject_key">$i.name ($i.tag_type)</ol-chip>
+            </ol-chip-group>
         </div>
 </div>
 <div class="contentBody">
