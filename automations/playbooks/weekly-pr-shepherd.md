@@ -1,8 +1,10 @@
-# Playbook: Weekly own-PR shepherd
+# Routine: Weekly own-PR shepherd
 
-**Run as:** scheduled Claude Code-on-web session on `internetarchive/openlibrary`.
-**Suggested cadence:** Monday mornings (e.g. cron `47 7 * * 1`, local time).
-**Output:** a Gmail draft to lokesh.dhakar@gmail.com.
+**Paste this whole file as the prompt of a Routine at https://claude.ai/code/routines.**
+- **Trigger:** Schedule → weekly, Monday morning (e.g. `47 7 * * 1`).
+- **Repositories:** add `internetarchive/openlibrary` (read-only; pushes nothing).
+- **Connectors:** keep **Gmail**; remove the rest.
+- **Output:** a Gmail draft to lokesh.dhakar@gmail.com.
 
 ---
 

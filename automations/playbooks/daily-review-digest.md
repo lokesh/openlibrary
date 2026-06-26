@@ -1,9 +1,11 @@
-# Playbook: Daily front-end review-queue digest
+# Routine: Daily front-end review-queue digest
 
-**Run as:** scheduled Claude Code-on-web session on `internetarchive/openlibrary`.
-**Suggested cadence:** weekday mornings (e.g. cron `53 7 * * 1-5`, local time).
-**Output:** a Gmail draft to lokesh.dhakar@gmail.com. (Gmail can draft, not send —
-open the draft to read it.)
+**Paste this whole file as the prompt of a Routine at https://claude.ai/code/routines.**
+- **Trigger:** Schedule → weekdays, early morning (e.g. `53 7 * * 1-5`).
+- **Repositories:** add `internetarchive/openlibrary` (read-only; pushes nothing).
+- **Connectors:** keep **Gmail**; remove the rest.
+- **Output:** a Gmail draft to lokesh.dhakar@gmail.com. (Gmail can draft, not send —
+  open the draft to read it.)
 
 ---
 

@@ -1,12 +1,14 @@
-# Playbook: messages.pot merge-conflict fixer
+# Routine: messages.pot merge-conflict fixer
 
-**Run as:** scheduled or on-demand Claude Code-on-web session on
-`internetarchive/openlibrary`, **with the repo checked out** (this one needs git, not
-just the API).
-**Suggested cadence:** daily, or trigger when a shepherd run flags a `.pot` conflict.
-**Output:** for each of Lokesh's branches with a `messages.pot`-only conflict, either a
-ready-to-apply resolution on the branch (if write/opt-in) or a Gmail draft with the
-exact commands. Default: **draft + commands**, no push.
+**Paste this whole file as the prompt of a Routine at https://claude.ai/code/routines.**
+- **Trigger:** Schedule → daily (e.g. `17 8 * * *`), or add an API trigger to fire it
+  from a shepherd run that flags a `.pot` conflict.
+- **Repositories:** add **your fork `lokesh/openlibrary`** — this routine needs a real
+  git checkout, not just the API. To let it push fixes, enable **Allow unrestricted
+  branch pushes** for the fork; otherwise it only pushes `claude/`-prefixed branches.
+- **Connectors:** keep **Gmail**.
+- **Output:** by default a Gmail draft with copy-paste fixes (no push). Opt in to
+  auto-fix to have it resolve + push to your branches.
 
 ---
 
