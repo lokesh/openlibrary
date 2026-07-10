@@ -415,11 +415,16 @@ class SubjectEngine:
             # infra, per the epic's Phase 1 scope note.
             sort="readinglog",
             facet=False,
-            fields=["key", "title", "author_key", "author_name"],
+            fields=["key", "title", "author_key", "author_name", "cover_i"],
         )
 
         notable_authors: dict[str, web.storage] = {}
         for doc in result.docs:
+            work_key = doc.get("key")
+            work_title = doc.get("title")
+            # A work with no key/title can't be a usable representative work.
+            if not work_key or not work_title:
+                continue
             author_keys = doc.get("author_key") or []
             author_names = doc.get("author_name") or []
             for olid, name in zip(author_keys, author_names):
@@ -429,14 +434,21 @@ class SubjectEngine:
                     key=f"/authors/{olid}",
                     name=name,
                     representative_work=web.storage(
-                        key=doc["key"],
-                        title=doc["title"],
+                        key=work_key,
+                        title=work_title,
+                        # Optional: enables the small at-a-glance cover thumbnail
+                        # on the author card. May be None for cover-less works.
+                        cover_id=doc.get("cover_i"),
                     ),
                     # Backfilled below from the exact facet count; falls back
                     # to 1 (this work) if the author is somehow missing from
                     # the facet, which shouldn't normally happen.
                     count=1,
                 )
+                # Stop as soon as the cap is hit, mid-doc — a multi-author work
+                # shouldn't be able to push the list past MAX_NOTABLE_AUTHORS.
+                if len(notable_authors) >= MAX_NOTABLE_AUTHORS:
+                    break
             if len(notable_authors) >= MAX_NOTABLE_AUTHORS:
                 break
 

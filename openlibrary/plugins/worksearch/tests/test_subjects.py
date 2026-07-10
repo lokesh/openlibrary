@@ -256,6 +256,52 @@ class TestGetNotableAuthorsAsync:
         assert len(authors) == subjects_module.MAX_NOTABLE_AUTHORS
 
     @pytest.mark.asyncio
+    async def test_multi_author_work_does_not_overshoot_cap(self):
+        """A single work with many authors can't push the list past the cap."""
+        from openlibrary.plugins.worksearch import subjects as subjects_module
+
+        engine = self._make_engine()
+        n = subjects_module.MAX_NOTABLE_AUTHORS + 5
+        docs = [
+            {
+                "key": "/works/OL1W",
+                "title": "Big Collaboration",
+                "author_key": [f"OL{i}A" for i in range(n)],
+                "author_name": [f"Author {i}" for i in range(n)],
+            }
+        ]
+        mock_result = self._make_solr_result(docs)
+
+        with patch(
+            "openlibrary.plugins.worksearch.code.run_solr_query_async",
+            return_value=mock_result,
+        ):
+            authors = await engine.get_notable_authors_async("science_fiction", {})
+
+        assert len(authors) == subjects_module.MAX_NOTABLE_AUTHORS
+
+    @pytest.mark.asyncio
+    async def test_skips_works_missing_key_or_title(self):
+        """A doc missing key/title is skipped rather than crashing the scan."""
+        engine = self._make_engine()
+        docs = [
+            {"key": "/works/OL1W", "author_key": ["OL1A"], "author_name": ["No Title"]},
+            {"title": "No Key", "author_key": ["OL2A"], "author_name": ["No Key Author"]},
+            {"key": "/works/OL3W", "title": "Good Work", "author_key": ["OL3A"], "author_name": ["Valid Author"]},
+        ]
+        mock_result = self._make_solr_result(docs)
+
+        with patch(
+            "openlibrary.plugins.worksearch.code.run_solr_query_async",
+            return_value=mock_result,
+        ):
+            authors = await engine.get_notable_authors_async("science_fiction", {})
+
+        assert len(authors) == 1
+        assert authors[0].name == "Valid Author"
+        assert authors[0].representative_work.title == "Good Work"
+
+    @pytest.mark.asyncio
     async def test_no_matching_works_returns_empty_list(self):
         """Graceful fallback: a sparse/under-configured subject shouldn't error out."""
         engine = self._make_engine()
