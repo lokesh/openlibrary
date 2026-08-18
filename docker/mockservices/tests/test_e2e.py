@@ -156,6 +156,15 @@ def test_availability_post():
     assert "responses" in resp.json()
 
 
+def test_availability_get_unknown_identifier():
+    """lending.get_availability_async() GETs; unknown ids come back as not-found records."""
+    resp = _get("/services/availability/", params={"identifier": "definitely_not_in_solr", "scope": "printdisabled"})
+    body = resp.json()
+    assert resp.status_code == 200
+    assert body["success"] is True
+    assert body["responses"]["definitely_not_in_solr"]["status"] == "error"
+
+
 def test_borrow_status():
     resp = _get("/services/borrow/someocaid")
     body = resp.json()

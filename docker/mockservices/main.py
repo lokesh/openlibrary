@@ -7,7 +7,7 @@ provides mocks for external services that do not have dev interceptors:
   - IA S3 auth (was /internal/fake/s3auth)
   - IA loans   (was /internal/fake/loans)
   - IA loans "changes" feed (needed by the near-realtime loan availability updater)
-  - IA availability v2 (was not mocked — pointed at real archive.org)
+  - IA availability v2 (answers from local Solr ebook_access)
   - IA borrow status (was hardcoded in lending.py)
   - reCAPTCHA siteverify
   - be-api full-text search
@@ -321,13 +321,105 @@ async def loan_changes(action: str, after_uid: int = 0, limit: int = 1000) -> JS
 
 # ---------------------------------------------------------------------------
 # IA Availability API v2  (was not mocked — pointed at real archive.org)
-# POST /services/availability/
+# GET /services/availability/?identifier=a,b&scope=printdisabled
+#   (also ?openlibrary_work=OL1W,... and ?openlibrary_edition=OL1M,...)
+#
+# Answers from the local Solr index: each id's `ebook_access` is mapped to the
+# same AvailabilityStatus shape `lending.get_ebook_access_availability()` uses,
+# so Read / Borrow / Preview / Not-online states in dev agree with the
+# `ebook_access` counts shown elsewhere on the site. To make the rarer lending
+# states reachable in the browser, a deterministic slice of borrowable items
+# is reported as waitlisted (every 5th) or checked out (every 7th).
 # ---------------------------------------------------------------------------
 
+_AVAILABILITY_ID_TYPES = {
+    "identifier": "ia",
+    "openlibrary_work": "key",
+    "openlibrary_edition": "edition_key",
+}
 
+
+def _availability_from_ebook_access(ocaid: str | None, ebook_access: str) -> dict:
+    status = {"public": "open", "borrowable": "borrow_available"}.get(ebook_access, "error")
+    lendable = ebook_access == "borrowable"
+    available_to_borrow = lendable
+    available_to_waitlist = False
+    if lendable and ocaid:
+        bucket = sum(map(ord, ocaid))
+        if bucket % 5 == 0:
+            status, available_to_borrow, available_to_waitlist = "borrow_unavailable", False, True
+        elif bucket % 7 == 0:
+            status, available_to_borrow = "borrow_unavailable", False
+    printdisabled = ebook_access in ("public", "borrowable", "printdisabled")
+    return {
+        "status": status,
+        "error_message": None,
+        "available_to_browse": available_to_borrow,
+        "available_to_borrow": available_to_borrow,
+        "available_to_waitlist": available_to_waitlist,
+        "is_printdisabled": printdisabled,
+        "is_readable": ebook_access == "public",
+        "is_lendable": lendable,
+        "is_previewable": printdisabled,
+        "identifier": ocaid,
+        "isbn": None,
+        "oclc": None,
+        "openlibrary_work": None,
+        "openlibrary_edition": None,
+        "last_loan_date": None,
+        "num_waitlist": "3" if available_to_waitlist else None,
+        "last_waitlist_date": None,
+        "collection": None,
+        "__src__": "mockservices",
+    }
+
+
+async def _solr_docs_for_ids(field: str, ids: list[str]) -> list[dict]:
+    values = " OR ".join(f'"{"/works/" + i if field == "key" else i}"' for i in ids)
+    try:
+        async with httpx.AsyncClient(timeout=3) as client:
+            resp = await client.get(
+                _SOLR_URL,
+                params={
+                    "q": f"{field}:({values})",
+                    "fq": "type:work",
+                    "fl": "key,ia,edition_key,ebook_access,lending_identifier_s",
+                    "rows": 2 * len(ids),
+                    "wt": "json",
+                },
+            )
+            resp.raise_for_status()
+            return resp.json()["response"]["docs"]
+    except httpx.HTTPError, KeyError, ValueError:
+        logger.warning("availability: could not query solr, answering 'not found' for %s ids", len(ids))
+        return []
+
+
+@app.get("/services/availability/")
 @app.post("/services/availability/")
-async def availability() -> JSONResponse:
-    return JSONResponse({"responses": {}})
+async def availability(request: Request) -> JSONResponse:
+    params = dict(request.query_params)
+    id_type = next((t for t in _AVAILABILITY_ID_TYPES if params.get(t)), None)
+    if not id_type:
+        return JSONResponse({"success": False, "error": "no identifiers given", "responses": {}})
+    ids = [i for i in params[id_type].split(",") if i]
+    docs = await _solr_docs_for_ids(_AVAILABILITY_ID_TYPES[id_type], ids)
+
+    by_id: dict[str, dict] = {}
+    for doc in docs:
+        ocaid = doc.get("lending_identifier_s") or (doc.get("ia") or [None])[0]
+        record = _availability_from_ebook_access(ocaid, doc.get("ebook_access", "no_ebook"))
+        if id_type == "identifier":
+            for ia_id in doc.get("ia") or []:
+                by_id.setdefault(ia_id, {**record, "identifier": ia_id})
+        elif id_type == "openlibrary_work":
+            by_id[doc["key"].split("/")[-1]] = record
+        else:
+            for olid in doc.get("edition_key") or []:
+                by_id.setdefault(olid, record)
+
+    responses = {i: by_id.get(i, {"status": "error", "error_message": "not found"}) for i in ids}
+    return JSONResponse({"success": True, "error": None, "responses": responses})
 
 
 # ---------------------------------------------------------------------------
