@@ -64,7 +64,7 @@ class BookAccess(TypedDict):
     url: str | None
     external: bool
     method: Literal["get", "post"]
-    badge: Literal["not_online", "preview"] | None
+    badge: Literal["preview"] | None
     login_intent: bool
     ocaid: str | None
 
@@ -196,8 +196,8 @@ def build_access(edition: dict, user=None) -> BookAccess:
         return {**base, "cta": "preview", "url": f"https://archive.org/details/{ocaid}", "external": True, "badge": "preview"}
     # locate
     if edition_key:
-        return {**base, "cta": "find_in_library", "url": f"/books/{edition_key}/-/borrow?action=locate", "external": True, "badge": "not_online"}
-    return {**base, "badge": "not_online"}
+        return {**base, "cta": "find_in_library", "url": f"/books/{edition_key}/-/borrow?action=locate", "external": True}
+    return base
 
 
 def to_book_card(work: dict, user=None) -> BookCard:

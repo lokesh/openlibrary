@@ -93,13 +93,13 @@ class TestBuildAccess:
 
     def test_locate(self):
         a = self.access("locate")
-        assert (a["cta"], a["badge"], a["external"]) == ("find_in_library", "not_online", True)
+        assert (a["cta"], a["badge"], a["external"]) == ("find_in_library", None, True)
         assert a["url"] == "/books/OL9M/-/borrow?action=locate"
 
     def test_locate_without_edition_key_is_not_in_library(self):
         with patch(f"{SERVICE}.get_lending_state", return_value="locate"):
             a = svc.build_access({"key": "/works/OL1W"})
-        assert (a["cta"], a["url"], a["badge"]) == ("not_in_library", None, "not_online")
+        assert (a["cta"], a["url"], a["badge"]) == ("not_in_library", None, None)
 
     def test_partner_open_access(self):
         edition = {"key": "/books/OL9M", "id_standard_ebooks": ["foo/bar"], "ebook_access": "public"}

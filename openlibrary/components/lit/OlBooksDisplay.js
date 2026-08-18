@@ -57,7 +57,6 @@ export const DEFAULT_LABELS = {
     checkedOut: 'Checked Out',
     findInLibrary: 'Find in a library',
     notInLibrary: 'Not in Library',
-    notOnline: 'Not online',
     previewBadge: 'Preview',
     ratingsOne: '%(count)s rating',
     ratingsMany: '%(count)s ratings',
@@ -348,9 +347,8 @@ export class OlBooksDisplay extends LitElement {
     }
 
     _renderBadge(doc) {
-        const badge = doc.access?.badge;
-        if (!badge) return nothing;
-        return html`<span class="obd-badge">${badge === 'preview' ? this.t('previewBadge') : this.t('notOnline')}</span>`;
+        if (doc.access?.badge !== 'preview') return nothing;
+        return html`<span class="obd-badge">${this.t('previewBadge')}</span>`;
     }
 
     _renderCoverCard(doc) {
