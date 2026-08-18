@@ -7,6 +7,8 @@ db_parameters:
 
 data_root: "/var/lib/coverstore"
 default_image: "static/images/empty.gif"
+# Dev-only: covers missing from the local store redirect to production.
+fallback_url: "https://covers.openlibrary.org"
 
 sentry:
     enabled: false

@@ -247,6 +247,8 @@ class cover:
             return url.startswith(("http://", "https://"))
 
         def notfound():
+            if key == "id" and config.get("fallback_url"):
+                return web.found(f"{config.fallback_url.rstrip('/')}{web.ctx.path}{web.ctx.query}")
             if config.default_image and i.default.lower() != "false" and not is_valid_url(i.default):
                 return read_file(config.default_image)
             elif is_valid_url(i.default):
@@ -302,7 +304,7 @@ class cover:
                 return web.found(archive.Cover.get_cover_url(d.id, size=size, protocol=web.ctx.protocol))
             return read_image(d, size)
         except OSError:
-            return web.notfound()
+            return notfound()
 
     def get_ia_cover_url(self, identifier: str, size: Literal["S", "M", "L", ""] = "M"):
         url = f"https://archive.org/metadata/{identifier}/metadata"
