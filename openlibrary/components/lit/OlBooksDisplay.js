@@ -31,6 +31,8 @@ import './OlBookActions.js';
  * @prop {String} sort    - Solr sort (default "new")
  * @prop {Number} limit   - Page size (default 20)
  * @prop {String} title   - Section heading
+ * @prop {String} caption - Optional one-line description under the heading
+ * @prop {String} badge   - Optional short pill label next to the heading
  * @prop {String} url     - "See all" link
  * @prop {String} view    - "covers" | "list" (default "covers")
  * @prop {Boolean} hasFulltextOnly - Restrict to readable books (default true; attr has-fulltext-only="false" to disable)
@@ -57,7 +59,6 @@ export const DEFAULT_LABELS = {
     checkedOut: 'Checked Out',
     findInLibrary: 'Find in a library',
     notInLibrary: 'Not in Library',
-    previewBadge: 'Preview',
     ratingsOne: '%(count)s rating',
     ratingsMany: '%(count)s ratings',
     ratingsAverage: 'Rated %(average)s out of 5',
@@ -100,6 +101,8 @@ export class OlBooksDisplay extends LitElement {
         sort: { type: String },
         limit: { type: Number },
         title: { type: String },
+        caption: { type: String },
+        badge: { type: String },
         url: { type: String },
         view: { type: String, reflect: true },
         // Default-true flags: written as has-fulltext-only="false" to turn off,
@@ -128,6 +131,8 @@ export class OlBooksDisplay extends LitElement {
         this.sort = 'new';
         this.limit = 20;
         this.title = '';
+        this.caption = '';
+        this.badge = '';
         this.url = '';
         this.view = 'covers';
         this.hasFulltextOnly = true;
@@ -177,6 +182,27 @@ export class OlBooksDisplay extends LitElement {
     disconnectedCallback() {
         super.disconnectedCallback();
         this._observer?.disconnect();
+        this._coverObserver?.disconnect();
+    }
+
+    updated() {
+        this._observeCover();
+    }
+
+    /** Centre the carousel arrows on the cover row rather than the whole card:
+     *  watch the first cover's size and pass its midpoint to ol-carousel. */
+    _observeCover() {
+        const carousel = this.querySelector('.obd__carousel');
+        const cover = carousel?.querySelector('.obd-cover');
+        if (cover === this._observedCover) return;
+        this._coverObserver?.disconnect();
+        this._observedCover = cover;
+        if (!cover || !('ResizeObserver' in window)) return;
+        this._coverObserver = new ResizeObserver(() => {
+            const top = cover.getBoundingClientRect().top - carousel.getBoundingClientRect().top;
+            carousel.style.setProperty('--ol-carousel-arrow-center', `${top + cover.offsetHeight / 2}px`);
+        });
+        this._coverObserver.observe(cover);
     }
 
     /** Kick off the first fetch (idempotent). */
@@ -255,9 +281,13 @@ export class OlBooksDisplay extends LitElement {
     _renderHeader() {
         return html`
             <div class="obd__header">
-                <h2 class="obd__title">
-                    ${this.url ? html`<a class="obd-link" href=${this.url}>${this.title}</a>` : this.title}
-                </h2>
+                <div class="obd__heading">
+                    <h2 class="obd__title">
+                        ${this.url ? html`<a class="obd-link" href=${this.url}>${this.title}</a>` : this.title}
+                        ${this.badge ? html`<span class="obd__badge">${this.badge}</span>` : nothing}
+                    </h2>
+                    ${this.caption ? html`<p class="obd__caption">${this.caption}</p>` : nothing}
+                </div>
                 <ol-segmented-control
                     class="obd__toggle"
                     size="small"
@@ -265,8 +295,8 @@ export class OlBooksDisplay extends LitElement {
                     accessible-label=${this.t('viewAs')}
                     @ol-segmented-control-change=${this._onViewChange}
                 >
-                    <ol-segment value="covers" label="">${icon('covers-row')} <span>${this.t('covers')}</span></ol-segment>
-                    <ol-segment value="list" label="">${icon('list')} <span>${this.t('list')}</span></ol-segment>
+                    <ol-segment value="covers" label=${this.t('covers')}>${icon('covers-row')}</ol-segment>
+                    <ol-segment value="list" label=${this.t('list')}>${icon('list')}</ol-segment>
                 </ol-segmented-control>
             </div>
         `;
@@ -346,11 +376,6 @@ export class OlBooksDisplay extends LitElement {
         `;
     }
 
-    _renderBadge(doc) {
-        if (doc.access?.badge !== 'preview') return nothing;
-        return html`<span class="obd-badge">${this.t('previewBadge')}</span>`;
-    }
-
     _renderCoverCard(doc) {
         const { shelf, rating } = this._stateFor(doc);
         return html`
@@ -359,7 +384,6 @@ export class OlBooksDisplay extends LitElement {
                     <a class="obd-cover__link" href=${doc.key} data-ol-link-track="BookCarousel|CoverClick|${this.analyticsKey}">
                         ${this._renderCover(doc)}
                     </a>
-                    ${this._renderBadge(doc)}
                     ${this._renderSaveButton(doc, shelf, rating)}
                 </div>
                 <a class="obd-card__title" href=${doc.key}>${doc.title}</a>

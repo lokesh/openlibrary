@@ -1,5 +1,13 @@
 /* Titled carousels on subject pages (Tag-body QueryCarousels): a bold serif
    heading with an optional pill badge beside it and a muted caption below. */
+
+/* ol-books-display carries no outer spacing of its own, so space the
+   stacked sections here. */
+.subject-page__main ol-books-display {
+  display: block;
+  margin-bottom: var(--spacing-stack-xl);
+}
+
 .subject-page__main .carousel-section-header {
   margin: var(--spacing-stack-xl) 0 var(--spacing-stack-sm);
 }

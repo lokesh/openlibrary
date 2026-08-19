@@ -38,6 +38,8 @@ import { LitElement, html, css, nothing } from 'lit';
  * @cssprop [--ol-carousel-arrow-icon-bg=#fff] - Background of the round arrow buttons
  * @cssprop [--ol-carousel-arrow-icon-border=hsl(55, 20%, 83%)] - Border of the round arrow buttons
  * @cssprop [--ol-carousel-arrow-icon-size=36px] - Diameter of the round arrow buttons
+ * @cssprop [--ol-carousel-arrow-center] - Vertical centre of the arrows, measured from the top of the viewport
+ *   (e.g. the midpoint of a cover image). Unset: arrows centre on the full track height.
  * @cssprop [--ol-carousel-indicator-color=#ccc] - Colour of the inactive page indicators
  * @cssprop [--ol-carousel-indicator-active=#333] - Colour of the active page indicator
  * @cssprop [--ol-carousel-viewport-padding=0px] - Inner viewport padding so slotted items can show a hover lift/shadow without being clipped
@@ -201,7 +203,9 @@ export class OlCarousel extends LitElement {
             justify-content: center;
             position: absolute;
             top: 0;
-            bottom: 0;
+            /* Twice --ol-carousel-arrow-center tall, so the icon centres on that
+               line; unset (50%) = full track height. */
+            height: calc(var(--ol-carousel-arrow-center, 50%) * 2);
             width: var(--_arrow-icon-size);
             z-index: var(--z-index-local-2);
             border: none;

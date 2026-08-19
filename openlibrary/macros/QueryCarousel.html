@@ -16,18 +16,23 @@ $# * user_lang_only (bool) -- Whether to filter results by the user's language
 $# * fallback (bool) -- Whether to show a fallback message if no results are found
 $# * safe_mode (bool) -- When True, blurs covers of books that have a `content_warning` tag
 
-$ fallback_query = None
-$if user_lang_only:
-  $ web_lang = get_lang() or 'en'
-  $ user_lang= convert_iso_to_marc(web_lang)
-  $if user_lang and user_lang in get_populated_languages():
-        $ fallback_query = query
-        $ query = query + ' language:' + user_lang
-
-$ fallback = fallback and fallback_query
-
-$if use_cache and not lazy:
-    $# Note this won't work with fallback; the JS that handles retries is in lazy-carousel.js
-    $:macros.CacheableMacro("RawQueryCarousel", query, title=title, sort=sort, key=key, limit=limit, search=search, has_fulltext_only=has_fulltext_only, url=url, layout=layout, fallback=fallback, safe_mode=safe_mode, caption=caption, badge=badge)
+$# Subject pages (ctx.books_display) render the ol-books-display component
+$# instead; grid and search-within-collection stay on the legacy carousel.
+$if ctx.get('books_display') and layout == 'carousel' and not search:
+    $:macros.BooksDisplay(query, title=title or '', sort=sort, key=key, limit=limit, has_fulltext_only=has_fulltext_only, url=url, user_lang_only=user_lang_only, safe_mode=safe_mode, caption=caption, badge=badge)
 $else:
-    $:macros.RawQueryCarousel(query, title=title, sort=sort, key=key, limit=limit, search=search, has_fulltext_only=has_fulltext_only, url=url, layout=layout, lazy=lazy, fallback=fallback, safe_mode=safe_mode, caption=caption, badge=badge)
+    $ fallback_query = None
+    $if user_lang_only:
+      $ web_lang = get_lang() or 'en'
+      $ user_lang= convert_iso_to_marc(web_lang)
+      $if user_lang and user_lang in get_populated_languages():
+            $ fallback_query = query
+            $ query = query + ' language:' + user_lang
+
+    $ fallback = fallback and fallback_query
+
+    $if use_cache and not lazy:
+        $# Note this won't work with fallback; the JS that handles retries is in lazy-carousel.js
+        $:macros.CacheableMacro("RawQueryCarousel", query, title=title, sort=sort, key=key, limit=limit, search=search, has_fulltext_only=has_fulltext_only, url=url, layout=layout, fallback=fallback, safe_mode=safe_mode, caption=caption, badge=badge)
+    $else:
+        $:macros.RawQueryCarousel(query, title=title, sort=sort, key=key, limit=limit, search=search, has_fulltext_only=has_fulltext_only, url=url, layout=layout, lazy=lazy, fallback=fallback, safe_mode=safe_mode, caption=caption, badge=badge)

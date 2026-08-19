@@ -29,11 +29,35 @@ ol-books-display:not(:defined) {
   margin-bottom: var(--spacing-stack-sm);
 }
 
+.obd__heading {
+  min-width: 0;
+}
+
 .obd__title {
   margin: 0;
   font-family: var(--font-family-heading);
   font-size: var(--font-size-title-large);
   line-height: var(--line-height-heading);
+}
+
+.obd__badge {
+  display: inline-block;
+  margin-left: var(--spacing-inline-sm);
+  padding: 2px 10px;
+  border-radius: var(--border-radius-pill);
+  background: var(--color-success-bg);
+  color: var(--color-success-fg);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-label-medium);
+  font-weight: 700;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.obd__caption {
+  margin: var(--spacing-stack-xs) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-medium);
 }
 
 /* Links. Two classes so these beat the page-level `a:link` rules. */
@@ -84,7 +108,7 @@ ol-books-display:not(:defined) {
   border-radius: var(--border-radius-sm);
 }
 
-/* ── Shared: covers, badges, CTAs ─────────────────────────── */
+/* ── Shared: covers, CTAs ─────────────────────────────────── */
 
 .obd-cover {
   position: relative;
@@ -140,22 +164,6 @@ ol-books-display:not(:defined) {
   white-space: nowrap;
 }
 
-.obd-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 2px 6px;
-  border-radius: var(--border-radius-badge);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: var(--font-size-label-small);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  box-shadow: 0 1px 2px var(--book-cover-shadow-color);
-  pointer-events: none;
-}
-
 /* Mirrors ol-button (see ol-button.css): raised shadow + inset specular
    edge, primary lightens on hover, secondary darkens. */
 .obd .obd-cta {
@@ -165,12 +173,12 @@ ol-books-display:not(:defined) {
   justify-content: center;
   gap: var(--spacing-inline-xs);
   box-sizing: border-box;
-  height: var(--control-height-medium);
-  padding: 0 var(--spacing-md);
+  height: var(--control-height-small);
+  padding: 0 var(--spacing-sm);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--border-radius-button);
   font-family: var(--font-family-button);
-  font-size: var(--font-size-body-medium);
+  font-size: var(--font-size-label-medium);
   line-height: var(--line-height-control);
   white-space: nowrap;
   text-decoration: none;
@@ -229,8 +237,10 @@ ol-books-display:not(:defined) {
   height: 14px;
 }
 
+/* Join-waitlist is a POST form; display: contents makes the button itself
+   the flex item so the layout class (margin-top: auto etc.) applies to it. */
 .obd-cta-form {
-  margin: 0;
+  display: contents;
 }
 
 /* ── Covers view (carousel cards) ─────────────────────────── */
@@ -275,6 +285,13 @@ ol-books-display:not(:defined) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Temporarily hidden in the covers view; the rules above stay so these can come
+   back by deleting this block. List view has its own title/author. */
+.obd .obd-card .obd-card__title,
+.obd .obd-card__author {
+  display: none;
 }
 
 .obd-card__cta {
@@ -473,12 +490,12 @@ ol-books-display:not(:defined) {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  height: calc(var(--control-height-medium) - 2px);
+  height: calc(var(--control-height-small) - 2px);
   border: 0;
   background: none;
   color: var(--color-text);
   font-family: var(--font-family-button);
-  font-size: var(--font-size-body-medium);
+  font-size: var(--font-size-label-medium);
   font-weight: 600;
   cursor: pointer;
 }

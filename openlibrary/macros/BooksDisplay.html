@@ -1,4 +1,4 @@
-$def with(query, title='', sort='new', key='', limit=20, has_fulltext_only=True, url=None, view='covers', user_lang_only=False, safe_mode=True)
+$def with(query, title='', sort='new', key='', limit=20, has_fulltext_only=True, url=None, view='covers', user_lang_only=False, safe_mode=True, caption=None, badge=None)
 
 $# Renders an <ol-books-display> for a Solr query: a titled set of books
 $# switchable between the covers carousel and the list view, with per-book
@@ -15,6 +15,8 @@ $# * url (str) -- "See all" link (defaults to the search page for `query`)
 $# * view (str) -- initial view: 'covers' or 'list'
 $# * user_lang_only (bool) -- restrict to the user's language, falling back to all languages when that finds nothing
 $# * safe_mode (bool) -- hide covers of books with a content_warning tag
+$# * caption (str) -- optional one-line description shown under the title
+$# * badge (str) -- optional short pill label shown next to the title, e.g. "Award winner"
 
 $ fallback_query = ''
 $if user_lang_only:
@@ -47,7 +49,6 @@ $code:
         "checkedOut": _("Checked Out"),
         "findInLibrary": _("Find in a library"),
         "notInLibrary": _("Not in Library"),
-        "previewBadge": _("Preview"),
         "ratingsOne": _("%(count)s rating"),
         "ratingsMany": _("%(count)s ratings"),
         "ratingsAverage": _("Rated %(average)s out of 5"),
@@ -89,6 +90,10 @@ $code:
   sort="$sort"
   limit="$limit"
   title="$title"
+  $if caption:
+    caption="$caption"
+  $if badge:
+    badge="$badge"
   url="$url"
   view="$view"
   has-fulltext-only="$('true' if has_fulltext_only else 'false')"

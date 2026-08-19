@@ -21,6 +21,8 @@ import { slotHasContent } from './utils/slot-utils.js';
  * @property {String} name - Form field name. When set and the toggle is
  *   checked, it submits with the enclosing `<form>` (see FormAssociatedMixin).
  * @property {String} value - Value submitted when checked. Default "on".
+ * @property {String} size - "medium" (default) or "small": a smaller switch,
+ *   label-medium text, and control-height-small in the button variant.
  * @property {String} variant - Omit for the default (plain) toggle, or
  *   "button" for a bordered, raised container styled like
  *   ol-button[variant="secondary"] (subtle drop shadow, inset specular edge on
@@ -53,6 +55,7 @@ export class OlToggle extends FormAssociatedMixin(FocusableHostMixin(LitElement)
         checked: { type: Boolean, reflect: true },
         disabled: { type: Boolean, reflect: true },
         variant: { type: String, reflect: true },
+        size: { type: String, reflect: true },
         label: { type: String },
         sublabel: { type: String },
         accessibleLabel: { type: String, attribute: 'accessible-label' },
@@ -80,6 +83,17 @@ export class OlToggle extends FormAssociatedMixin(FocusableHostMixin(LitElement)
             --_toggle-knob: var(--white);
 
             display: inline-block;
+        }
+
+        :host([size="small"]) {
+            --toggle-track-width: 30px;
+            --toggle-track-height: 16px;
+            --toggle-knob-size: 12px;
+            --toggle-gap: 8px;
+        }
+
+        :host([size="small"]) .toggle {
+            font-size: var(--font-size-label-medium);
         }
 
         .toggle {
@@ -193,6 +207,10 @@ export class OlToggle extends FormAssociatedMixin(FocusableHostMixin(LitElement)
                 var(--box-shadow-raised),
                 inset 0 1px 0 var(--_toggle-inset-highlight);
             box-shadow: var(--_toggle-raised-shadow);
+        }
+
+        :host([variant="button"][size="small"]) .toggle {
+            height: var(--control-height-small);
         }
 
         /* The base .toggle:focus-visible ring is a single box-shadow, but the
