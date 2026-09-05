@@ -171,7 +171,7 @@ export class OlToast extends LitElement {
             max-width: 100%;
             padding: var(--spacing-inset-md);
             background-color: var(--white);
-            color: var(--darker-grey);
+            color: var(--color-text);
             font-size: var(--font-size-body-medium);
             line-height: 1.4;
             /* Same edge as ol-popover and ol-dialog: one overlay surface */
@@ -217,11 +217,11 @@ export class OlToast extends LitElement {
         }
 
         .toast--success .toast__icon {
-            background-color: var(--green);
+            background-color: var(--color-success-object);
         }
 
         .toast--error .toast__icon {
-            background-color: var(--red);
+            background-color: var(--color-error-object);
         }
 
         .toast__body {

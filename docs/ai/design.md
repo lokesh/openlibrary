@@ -144,13 +144,15 @@ Semantic tokens reference primitives and describe purpose, not appearance.
 --border-radius-card: var(--border-radius-lg);
 ```
 
-The main semantic groups in `colors.css`: text (`--color-text`, `-heading`, `-secondary`, `-muted`, `-inverse`), icons (`--color-icon-muted`), surfaces (`--color-background`, `--color-surface`, `-raised`, `-sunken`, `-header`), links (`--color-link`, `-hover`, `-visited`), primary action (`--color-primary`, `-hover`, `-active`, `-subtle`, `--color-on-primary`), borders (`--color-border`, `-muted`, `-subtle`, `-extra-subtle`, `-hover`, `-focused`, `-error`, `--color-focus-ring`), and status (`--color-{info,success,error,warning}-{fg,bg,border}`).
+The main semantic groups in `colors.css`: text (`--color-text`, `-heading`, `-secondary`, `-muted`, `-inverse`), icons (`--color-icon-muted`), surfaces (`--color-background`, `--color-surface`, `-raised`, `-sunken`, `-header`, `-inverse`), links (`--color-link`, `-hover`, `-visited`), primary action (`--color-primary`, `-hover`, `-active`, `-subtle`, `--color-on-primary`), destructive action (`--color-destructive`), borders (`--color-border`, `-muted`, `-subtle`, `-extra-subtle`, `-hover`, `-focused`, `-error`, `--color-focus-ring`), and status (`--color-{info,success,error,warning}-{fg,bg,border}`, plus `--color-{success,error,warning,neutral}-object` for status *shapes* like badges and switch tracks).
 
 Three of these are a **decorative tier** and carry that caveat in `colors.css`: `--color-border-muted` (1.6:1 on white), `--color-border-extra-subtle` (1.11:1) and `--color-icon-muted` (2.5:1). In new code they're for dividers and inert chrome — anything a user has to *read*, or that is the sole marker of a control's edge, needs `--color-border` or darker.
 
 The three border weights are a scale, not three names for the same job. `--color-border-subtle` (1.3:1) is the everyday divider. `--color-border-extra-subtle` is for a separator that *repeats* — the rules between rows of a result list — where the everyday weight accumulates into a grid and the list starts reading as a spreadsheet.
 
 You will find existing control borders on `--color-border-muted`. They were migrated at their original weight so the token rollout stayed a no-op; that they sit below 3:1 is a pre-existing gap to fix deliberately, not a precedent to copy.
+
+Selected has one look: `--color-control-selected-bg` with `--color-link` text, shared by `ol-button[selected]`, the toggle's button variant, the current pagination page, the Scorecard's active tab, and the editor's pressed toolbar buttons. A grey fill for "selected" is legacy, not a second option.
 
 Hover has two tokens, split by mechanism rather than by surface. `--color-hover-overlay` is a translucent overlay for flat interactive rows (popover items, menu items, list rows) — it composes over whatever surface it lands on, so a row on `--color-surface-sunken` or `-header` still darkens instead of matching its own background. `--color-control-hover` is an opaque fill for raised controls, and must stay opaque: alpha fed to `--control-surface` inverts the specular highlight.
 

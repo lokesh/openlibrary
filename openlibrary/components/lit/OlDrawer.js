@@ -161,7 +161,7 @@ export class OlDrawer extends LitElement {
             bottom: 0;
             width: var(--ol-drawer-width);
             max-width: 100%;
-            background: var(--light-beige);
+            background: var(--color-surface-header);
             overflow-y: auto;
             /* Keeps a Tab stop scrolled into view clear of any sticky header or
                footer the consumer slots in; the panel is shadow DOM, so this
@@ -185,13 +185,13 @@ export class OlDrawer extends LitElement {
         :host(:not([placement="start"])) .panel {
             --_ol-drawer-closed-x: 100%;
             right: 0;
-            box-shadow: -10px 0 10px -6px var(--boxshadow-black);
+            box-shadow: var(--box-shadow-overlay);
         }
 
         :host([placement="start"]) .panel {
             --_ol-drawer-closed-x: -100%;
             left: 0;
-            box-shadow: 10px 0 10px -6px var(--boxshadow-black);
+            box-shadow: var(--box-shadow-overlay);
         }
 
         /* Resolved transition-duration is what drives the JS lifecycle, so

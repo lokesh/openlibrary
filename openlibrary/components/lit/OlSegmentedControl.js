@@ -106,7 +106,7 @@ export class OlSegmentedControl extends FormAssociatedMixin(LitElement) {
             height: var(--control-height-medium);
             padding: var(--spacing-3xs);
             border-radius: var(--border-radius-button);
-            background-color: var(--lightest-grey);
+            background-color: var(--color-control-track);
         }
 
         :host([full-width]) .track {
@@ -268,7 +268,7 @@ export class OlSegmentedControl extends FormAssociatedMixin(LitElement) {
         }
 
         .segment:focus-visible {
-            outline: 2px solid var(--color-focus-ring);
+            outline: var(--focus-width) solid var(--color-focus-ring);
             outline-offset: -2px;
         }
 

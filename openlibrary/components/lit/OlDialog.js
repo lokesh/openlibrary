@@ -115,7 +115,7 @@ export class OlDialog extends LitElement {
         }
 
         dialog:focus-visible {
-            outline: 2px solid var(--color-focus-ring);
+            outline: var(--focus-width) solid var(--color-focus-ring);
             outline-offset: 2px;
         }
 

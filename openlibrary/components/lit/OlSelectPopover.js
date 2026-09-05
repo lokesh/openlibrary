@@ -322,7 +322,7 @@ export class OlSelectPopover extends FormAssociatedMixin(LitElement) {
         .item-count {
             margin-left: auto;
             flex-shrink: 0;
-            color: var(--accessible-grey);
+            color: var(--color-text-muted);
             font-size: var(--font-size-label-medium);
             font-variant-numeric: tabular-nums;
         }
@@ -339,14 +339,14 @@ export class OlSelectPopover extends FormAssociatedMixin(LitElement) {
             justify-content: center;
             gap: var(--spacing-inline-sm);
             padding: var(--spacing-inset-md);
-            color: var(--accessible-grey);
+            color: var(--color-text-muted);
             font-size: var(--font-size-body-medium);
         }
         .loading-spinner {
             width: 14px;
             height: 14px;
             border: 2px solid var(--color-border-subtle);
-            border-top-color: var(--accessible-grey);
+            border-top-color: var(--color-text-muted);
             border-radius: 50%;
             flex-shrink: 0;
             animation: ol-sp-spin var(--duration-spin) linear infinite;

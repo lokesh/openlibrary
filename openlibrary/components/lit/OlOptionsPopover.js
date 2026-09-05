@@ -173,7 +173,7 @@ export class OlOptionsPopover extends FormAssociatedMixin(LitElement) {
         }
 
         .item-radio:focus-visible {
-            outline: 2px solid var(--color-focus-ring);
+            outline: var(--focus-width) solid var(--color-focus-ring);
             outline-offset: 2px;
             border-radius: 50%;
         }

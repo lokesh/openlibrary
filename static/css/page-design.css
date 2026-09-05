@@ -27,6 +27,9 @@
    is worse than not documenting it at all. */
 @import "components/ol-message.css";
 
+/* Page and component titles set in the serif; import the face so it loads. */
+@import "fonts/literata.css";
+
 .ds {
   --ds-gutter: var(--spacing-inset-md);
   --ds-sidebar-width: 208px;
@@ -75,6 +78,7 @@ html:has(.ds) {
 
 .ds__title {
   margin: 0;
+  font-family: var(--font-family-serif);
   font-size: var(--font-size-headline-medium);
   color: var(--color-text);
 }
@@ -86,7 +90,8 @@ html:has(.ds) {
 .ds__tabs {
   display: flex;
   margin: 0 calc(var(--ds-gutter) * -1);
-  padding: 0 var(--ds-gutter);
+  /* Less the tab's own padding on the left, so the first label lands on the gutter. */
+  padding: 0 var(--ds-gutter) 0 calc(var(--ds-gutter) - var(--spacing-md));
   overflow-x: auto;
   /* A scrollbar under a tab row reads as a second divider; the cut-off last
      label is cue enough. */
@@ -97,7 +102,14 @@ html:has(.ds) {
   display: none;
 }
 
+/* ol-button's horizontal padding, so the underline runs 12px past the label
+   on each side. The row's left edge is pulled out by the same amount (below),
+   so the first label still sits flush without the overflow clip eating the
+   first tab's overhang. */
 .ds__tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   flex-shrink: 0;
   padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
   /* Transparent on every tab so the current one's underline shifts nothing. */
@@ -106,14 +118,25 @@ html:has(.ds) {
   white-space: nowrap;
 }
 
-/* Pull the first label flush with the title (mobile) or the content column (desktop). */
-.ds__tab:first-child {
-  margin-left: calc(var(--spacing-md) * -1);
+/* A hidden bold twin of the label sizes the tab for its heaviest state, so
+   the current tab can go bold without the row reflowing. The visible label
+   centers in that width, and the underline spans it. */
+.ds__tab-ghost {
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-weight: 600;
 }
 
 .ds__tab--current {
   border-bottom-color: var(--color-text);
   font-weight: 600;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ds__tab:not(.ds__tab--current):hover {
+    border-bottom-color: var(--color-border-hover);
+  }
 }
 
 /* ------------------------------------------------------------------ layout */
@@ -288,6 +311,7 @@ html:has(.ds) {
 
 .ds-section__title {
   margin: 0 0 var(--spacing-stack-sm);
+  font-family: var(--font-family-serif);
   font-size: var(--font-size-headline-small);
   color: var(--color-text);
 }
@@ -306,6 +330,7 @@ html:has(.ds) {
   padding-bottom: var(--spacing-stack-xs);
   margin-bottom: var(--spacing-stack-md);
   border-bottom: var(--border-divider);
+  font-family: var(--font-family-sans);
   font-size: var(--font-size-overline);
   font-weight: var(--font-weight-overline);
   letter-spacing: var(--letter-spacing-overline);
@@ -364,6 +389,7 @@ html:has(.ds) {
 
 .ds-group__title {
   margin: 0 0 var(--spacing-stack-sm);
+  font-family: var(--font-family-serif);
   font-size: var(--font-size-title-medium);
   color: var(--color-text);
 }
@@ -589,6 +615,7 @@ html:has(.ds) {
   gap: var(--spacing-inline-md);
   align-items: baseline;
   margin: 0 0 var(--spacing-stack-xs);
+  font-family: var(--font-family-serif);
   font-size: var(--font-size-title-large);
   color: var(--color-text);
 }
@@ -1106,23 +1133,49 @@ html:has(.ds) {
   cursor: pointer;
 }
 
+/* Demo rows inside a panel follow the menu-row contract in
+   tokens/control-heights.css: one row height, inset from the panel edge so
+   the hover fill reads as a pill, not a band running edge to edge. */
 .ds-demo-menu {
+  display: flex;
+  flex-direction: column;
   min-width: 160px;
   margin: 0;
-  padding: var(--spacing-inset-xs) 0;
+  padding: var(--menu-row-inset) 0;
   list-style: none;
 }
 
-.ds-demo-menu li {
-  padding: var(--spacing-inset-sm) var(--spacing-inset-md);
+.ds-demo-menu > li,
+.ds-demo-menu > .ds-demo-menu__link {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--menu-row-height);
+  margin-inline: var(--menu-row-inset);
+  padding: var(--spacing-inset-xs) var(--menu-row-padding-inline);
+  border-radius: var(--border-radius-button);
+  color: var(--color-text);
+  font-size: var(--font-size-body-medium);
+  text-decoration: none;
   cursor: pointer;
 }
 
-.ds-demo-menu li:hover {
-  background: var(--color-surface-sunken);
+@media (hover: hover) and (pointer: fine) {
+  .ds-demo-menu > li:hover,
+  .ds-demo-menu > .ds-demo-menu__link:hover {
+    background: var(--color-hover-overlay);
+  }
 }
 
-.ds-demo-menu__divided {
+.ds-demo-menu > .ds-demo-menu__link:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus-ring);
+  outline-offset: -2px;
+}
+
+/* Inset to the row edge, so the rule and the pills share one column. */
+.ds-demo-menu__divider {
+  margin: var(--menu-row-inset);
+  border: 0;
   border-top: var(--border-divider);
 }
 
@@ -1379,6 +1432,109 @@ fieldset.ds-demo-row {
   border-radius: var(--border-radius-button);
 }
 
+/* Right-to-left check (see design/playground.html.jinja). The demos below
+   inherit dir from .rtl-check, which the segmented control flips, so every
+   rule here is logical on purpose: a physical left/right would mask the very
+   drift the section exists to expose. */
+.rtl-check__controls {
+  margin-bottom: var(--spacing-stack-md);
+}
+
+.rtl-check {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-stack-sm);
+}
+
+.rtl-check > .ds-group__title:not(:first-child) {
+  margin-top: var(--spacing-stack-lg);
+}
+
+/* A cut-down book page: cover at the inline start, record beside it. */
+.rtl-check__book {
+  align-items: flex-start;
+  gap: var(--spacing-inline-xl);
+}
+
+.rtl-check__cover {
+  flex: none;
+  width: 96px;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--border-radius-sm);
+  background: linear-gradient(160deg, var(--neutral-200), var(--neutral-400));
+}
+
+.rtl-check__record {
+  display: flex;
+  flex: 1 1 280px;
+  flex-direction: column;
+  gap: var(--spacing-stack-sm);
+  min-width: 0;
+}
+
+.rtl-check__title {
+  margin: 0;
+  font-family: var(--font-family-title);
+  font-size: var(--font-size-headline-medium);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.rtl-check__subtitle {
+  margin: 0;
+  font-family: var(--font-family-subtitle);
+  font-size: var(--font-size-title-medium);
+  color: var(--color-text-secondary);
+}
+
+.rtl-check__byline {
+  margin: 0;
+  font-size: var(--font-size-body-medium);
+  color: var(--color-text-secondary);
+}
+
+.rtl-check__record ol-read-more {
+  width: 100%;
+}
+
+/* A mock edit form: stacked fields, actions at the inline end. */
+.rtl-check__form {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-stack-md);
+  max-width: 480px;
+}
+
+.rtl-check__field {
+  display: flex;
+  flex-direction: column;
+}
+
+.rtl-check__hint {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.rtl-check__input {
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--control-height-medium);
+  padding: 0 var(--spacing-inset-sm);
+  font: inherit;
+  font-size: var(--font-size-body-medium);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-input);
+  border-radius: var(--border-radius-input);
+}
+
+.rtl-check__actions {
+  display: flex;
+  gap: var(--spacing-inline-md);
+  justify-content: flex-end;
+}
+
 /* ----------------------------------------------------------------- desktop */
 
 /* ------------------------------------------------------------ link resets */
@@ -1404,6 +1560,14 @@ fieldset.ds-demo-row {
   color: var(--color-text);
 }
 
+/* The title is a link home to the first section, but reads as a title. */
+.ds a.ds__title-link,
+.ds a.ds__title-link:hover,
+.ds a.ds__title-link:visited {
+  color: inherit;
+  text-decoration: none;
+}
+
 @media only screen and (min-width: 768px) {
   .ds {
     --ds-gutter: var(--spacing-inset-xl);
@@ -1425,7 +1589,7 @@ fieldset.ds-demo-row {
   }
 
   .ds__tabs {
-    margin: 0;
+    margin: 0 0 0 calc(var(--spacing-md) * -1);
     padding: 0;
   }
 

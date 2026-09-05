@@ -44,6 +44,12 @@ class OlScoreGauge extends LitElement {
             transition: stroke-dashoffset var(--duration-slow) var(--ease-enter);
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            .arc {
+                transition: none;
+            }
+        }
+
         .value {
             position: absolute;
             inset: 0;
@@ -68,17 +74,19 @@ class OlScoreGauge extends LitElement {
     }
 
     /**
-     * Threshold color for the current percentage, as a CSS custom-property
-     * reference with a literal fallback (never a hardcoded default), so a
-     * consumer can still override e.g. --scorecard-excellent from outside.
+     * Threshold color for the current percentage, as a CSS color expression
+     * built from the status object-tier tokens.
      * @returns {String}
      */
     _colorVar() {
-        if (this.percentage >= 80) return 'var(--green-500)';
-        if (this.percentage >= 60) return 'var(--green-400)';
-        if (this.percentage >= 40) return 'var(--amber-500)';
-        if (this.percentage >= 20) return 'var(--amber-600)';
-        return 'var(--red-500)';
+        // Object-tier status colors: saturated shapes, not text tones. The two
+        // in-between steps are mixed from their neighbours so the scale stays
+        // on the palette without extra tokens.
+        if (this.percentage >= 80) return 'var(--color-success-object)';
+        if (this.percentage >= 60) return 'color-mix(in oklch, var(--color-success-object) 70%, var(--color-warning-object))';
+        if (this.percentage >= 40) return 'var(--color-warning-object)';
+        if (this.percentage >= 20) return 'color-mix(in oklch, var(--color-warning-object) 55%, var(--color-error-object))';
+        return 'var(--color-error-object)';
     }
 
     /** @returns {import('lit').TemplateResult} */
@@ -279,7 +287,7 @@ export class OlScorecard extends LitElement {
         }
 
         button.tab[aria-selected="true"] {
-            background: var(--lightest-grey);
+            background: var(--color-control-selected-bg);
         }
 
         button.tab[aria-selected="true"] .tab-label {

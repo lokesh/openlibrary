@@ -9,12 +9,15 @@
 <div class="ds" data-ds-root>
     <header class="ds__masthead">
         <div class="ds__masthead-inner">
-            <h1 class="ds__title">Design System</h1>
+            <h1 class="ds__title"><a class="ds__title-link" href="/developers/design">Design System</a></h1>
             <nav class="ds__tabs" aria-label="Design system sections">
                 {% for candidate in sections %}
                     <a class="ds__tab{% if candidate.id == section.id %} ds__tab--current{% endif %}"
                        href="/developers/design/{{ candidate.id }}"
-                       {% if candidate.id == section.id %}aria-current="page"{% endif %}>{{ candidate.title }}</a>
+                       {% if candidate.id == section.id %}aria-current="page"{% endif %}>
+                        <span>{{ candidate.title }}</span>
+                        <span class="ds__tab-ghost" aria-hidden="true">{{ candidate.title }}</span>
+                    </a>
                 {% endfor %}
             </nav>
         </div>

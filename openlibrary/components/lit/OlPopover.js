@@ -221,7 +221,7 @@ export class OlPopover extends LitElement {
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             margin: 0 12px calc(12px + env(safe-area-inset-bottom));
-            border-radius: 20px;
+            border-radius: var(--border-radius-overlay);
             opacity: 1;
             transform: translateY(100%);
             touch-action: manipulation;
@@ -269,7 +269,7 @@ export class OlPopover extends LitElement {
             width: 36px;
             height: 4px;
             border-radius: 2px;
-            background: hsla(0, 0%, 0%, 0.2);
+            background: var(--color-drag-handle);
         }
 
         /* ── Focus sentinel (visually hidden) ── */

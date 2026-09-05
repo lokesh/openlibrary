@@ -114,7 +114,7 @@ export class OlPagination extends LitElement {
             padding: 0 var(--spacing-inset-xs);
             border-radius: var(--border-radius-button);
             background: transparent;
-            color: var(--darker-grey);
+            color: var(--color-text);
             line-height: var(--line-height-control);
             cursor: pointer;
             text-decoration: none;
@@ -145,20 +145,27 @@ export class OlPagination extends LitElement {
             outline-offset: 2px;
         }
 
+        /* The system's one selected look — shared with ol-button[selected]. */
         .pagination-item[aria-current="page"] {
-            background-color: var(--lightest-grey);
+            background-color: var(--color-control-selected-bg);
+            color: var(--color-link);
             cursor: default;
             user-select: none;
         }
 
         .pagination-item[aria-disabled="true"] {
-            color: var(--lighter-grey);
+            color: var(--color-disabled-fg);
             cursor: not-allowed;
         }
 
         /* No text to inset — min-width centers the icon. */
         .pagination-arrow {
             padding: 0;
+        }
+
+        /* Previous points toward the start edge, which is the right under RTL. */
+        :host(:dir(rtl)) .pagination-arrow ol-icon {
+            transform: scaleX(-1);
         }
 
         /* Height-matched to the items; natural width, since it's not a target. */
@@ -168,7 +175,7 @@ export class OlPagination extends LitElement {
             justify-content: center;
             height: var(--pagination-item-height);
             padding: 0 var(--spacing-inset-xs);
-            color: var(--mid-grey);
+            color: var(--color-icon-muted);
             cursor: default;
             user-select: none;
         }

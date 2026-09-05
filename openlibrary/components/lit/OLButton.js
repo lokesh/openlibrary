@@ -275,11 +275,11 @@ export class OLButton extends FormAssociatedMixin(FocusableHostMixin(LitElement)
 
         /* Destructive — solid red fill, mirroring primary but in the danger hue. */
         :host([variant="destructive"]) .control {
-            background-color: var(--red);
+            background-color: var(--color-destructive);
             border-color: var(--color-border-error);
             color: var(--white);
             /* Tone the specular highlight to the red fill and soften it, matching primary. */
-            --control-surface: var(--red);
+            --control-surface: var(--color-destructive);
             --control-highlight-strength: 18%;
         }
 
@@ -345,7 +345,7 @@ export class OLButton extends FormAssociatedMixin(FocusableHostMixin(LitElement)
 
         /* Focus ring — delegatesFocus lands focus on the inner control. */
         .control:focus-visible {
-            outline: 2px solid var(--color-focus-ring);
+            outline: var(--focus-width) solid var(--color-focus-ring);
             outline-offset: var(--spacing-3xs);
         }
 
