@@ -1344,6 +1344,11 @@ fieldset.ds-demo-row {
   text-transform: var(--text-transform-overline);
 }
 
+.ds-state-grid__none {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-label-small);
+}
+
 .ds-longform {
   display: flex;
   flex-direction: column;
