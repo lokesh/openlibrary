@@ -81,7 +81,7 @@ html:has(.ds) {
   margin: 0;
   font-family: var(--font-family-serif);
   font-size: var(--font-size-headline-medium);
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
 /* Section tabs. Plain links, since each one loads a page. Underline-style so
@@ -157,6 +157,15 @@ html:has(.ds) {
   min-width: 0;
 }
 
+/* The page's name, from the section list, so the masthead can stay a brand
+   rather than the heading. A step above the section titles beneath it. */
+.ds__page-title {
+  margin: 0 0 var(--spacing-stack-lg);
+  font-family: var(--font-family-serif);
+  font-size: var(--font-size-headline-large);
+  color: var(--color-text-heading);
+}
+
 /* ----------------------------------------------------------------- sidebar */
 
 .ds__sidebar {
@@ -176,11 +185,15 @@ html:has(.ds) {
 }
 
 .ds__nav-list a {
-  display: block;
-  padding: var(--spacing-inset-sm);
+  display: flex;
+  align-items: center;
+  /* Menu-row contract (tokens/control-heights.css): the token sets the row
+     height, so the block padding stays under it. */
+  min-height: var(--menu-row-height);
+  padding: var(--spacing-2xs) var(--spacing-inset-sm);
   border-radius: var(--border-radius-button);
   color: var(--color-text);
-  font-size: var(--font-size-label-medium);
+  font-size: var(--font-size-label-large);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -206,11 +219,19 @@ html:has(.ds) {
 .ds__nav-group-title {
   display: none;
   padding: var(--spacing-inset-xs) var(--spacing-inset-sm);
+  border-radius: var(--border-radius-button);
   color: var(--color-text-muted);
   font-size: var(--font-size-overline);
   font-weight: var(--font-weight-overline);
   letter-spacing: var(--letter-spacing-overline);
   text-transform: var(--text-transform-overline);
+}
+
+/* A jump to the group's section, so it takes the rows' hover. */
+@media (hover: hover) and (pointer: fine) {
+  .ds__nav-group-title:hover {
+    background-color: var(--color-surface-sunken);
+  }
 }
 
 /* Sits above the nav in the sidebar, separated by a rule so it reads as a
@@ -249,11 +270,9 @@ html:has(.ds) {
   border-bottom: 0;
 }
 
-/* Inside the tray the nav stacks, as in the desktop sidebar — but here it is a
-   menu, so its links follow the menu-row contract (see
-   tokens/control-heights.css): one row height, and a 4px gutter here that the
-   rows give back as padding, so labels stay 16px from the panel and the hover
-   fill reads as a pill rather than a band. */
+/* Inside the tray the nav stacks, as in the desktop sidebar, with a 4px gutter
+   that the rows give back as padding, so labels stay 16px from the panel and
+   the hover fill reads as a pill rather than a band. */
 .ds__nav-popover .ds__nav {
   padding: var(--spacing-inset-sm) var(--menu-row-inset) var(--spacing-inset-lg);
 }
@@ -263,11 +282,8 @@ html:has(.ds) {
 }
 
 .ds__nav-popover .ds__nav-list a {
-  display: flex;
-  align-items: center;
-  min-height: var(--menu-row-height);
-  padding: var(--spacing-2xs) var(--menu-row-padding-inline);
-  font-size: var(--font-size-body-medium);
+  padding-inline: var(--menu-row-padding-inline);
+  font-size: var(--font-size-body-large);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -294,6 +310,12 @@ html:has(.ds) {
   padding: var(--spacing-inset-xs) var(--menu-row-padding-inline);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .ds__nav-popover .ds__nav-group-title:hover {
+    background-color: var(--color-hover-overlay);
+  }
+}
+
 .ds__empty {
   padding: var(--spacing-inset-lg);
   color: var(--color-text-muted);
@@ -314,17 +336,20 @@ html:has(.ds) {
   margin: 0 0 var(--spacing-stack-sm);
   font-family: var(--font-family-serif);
   font-size: var(--font-size-headline-small);
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
-/* On Components the section title labels a group of components, and the
-   component titles below it are the headings people scan for. At 24px bold it
-   sat 2px from them and read as a sibling; as a quiet eyebrow over a rule it
-   reads as the container it is. */
-/* The eyebrow's rule already marks where a group starts, so the section's own
-   closing rule would land a second hairline a few pixels above it. */
-.ds-section:has(> .ds-section__title--eyebrow) {
+/* The eyebrow's rule already marks where a section starts, so the section's
+   own closing rule would land a second hairline a few pixels above it. */
+.ds-section:has(> .ds-section__title--eyebrow),
+.ds-section:has(> .ds-section__title--group) {
   border-bottom: 0;
+}
+
+/* The divider is the boundary, so the section keeps only its margin: with the
+   padding too, the air above the label was four times the air below it. */
+.ds-section:has(> .ds-section__title--group) {
+  padding-bottom: 0;
 }
 
 .ds-section__title--eyebrow {
@@ -339,12 +364,35 @@ html:has(.ds) {
   color: var(--color-text-muted);
 }
 
+/* On Components the section title names a group of components, and the
+   component titles beneath it are what people scan for. As a heading it either
+   competed with them or vanished among them, so it is a divider instead: a caps
+   label with the rule running out to its right. */
+.ds-section__title--group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-inline-lg);
+  margin-bottom: var(--spacing-stack-lg);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-overline);
+  font-weight: var(--font-weight-overline);
+  letter-spacing: var(--letter-spacing-overline);
+  text-transform: var(--text-transform-overline);
+  color: var(--color-text-secondary);
+}
+
+.ds-section__title--group::after {
+  content: "";
+  flex: 1;
+  border-top: var(--border-divider);
+}
+
 .ds-section__blurb,
 .ds-group__blurb,
 .ds-lead {
   max-width: 78ch;
   margin: 0 0 var(--spacing-stack-md);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   font-size: var(--font-size-body-medium);
 }
 
@@ -379,7 +427,7 @@ html:has(.ds) {
 .ds-tier__title {
   margin: 0 0 var(--spacing-stack-xs);
   font-size: var(--font-size-title-medium);
-  color: var(--color-text);
+  color: var(--color-text-heading);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -392,7 +440,7 @@ html:has(.ds) {
   margin: 0 0 var(--spacing-stack-sm);
   font-family: var(--font-family-serif);
   font-size: var(--font-size-title-medium);
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
 .ds-group__diagram {
@@ -424,7 +472,7 @@ html:has(.ds) {
 
 .ds-notes p {
   margin: 0 0 var(--spacing-stack-xs);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
 
 .ds-notes p:last-child {
@@ -440,13 +488,13 @@ html:has(.ds) {
 .ds-example__title {
   margin: 0 0 var(--spacing-stack-xs);
   font-size: var(--font-size-title-small);
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
 .ds-example__note {
   max-width: 78ch;
   margin: 0 0 var(--spacing-stack-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   font-size: var(--font-size-body-medium);
 }
 
@@ -479,7 +527,7 @@ html:has(.ds) {
 .ds .ds-example__output p {
   width: 100%;
   margin: var(--spacing-stack-xs) 0 0;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
   font-size: var(--font-size-body-medium);
 }
 
@@ -618,7 +666,7 @@ html:has(.ds) {
   margin: 0 0 var(--spacing-stack-xs);
   font-family: var(--font-family-serif);
   font-size: var(--font-size-title-large);
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
 .ds-component__tag {
@@ -820,7 +868,7 @@ html:has(.ds) {
 .ds-api__group {
   margin: var(--spacing-stack-md) 0 var(--spacing-stack-xs);
   font-size: var(--font-size-label-large);
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
 /* ------------------------------------------------------------------ tables */
@@ -1620,14 +1668,14 @@ fieldset.ds-demo-row {
   font-family: var(--font-family-serif);
   font-size: var(--font-size-headline-medium);
   line-height: 1.15;
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
 .ds-principle__blurb {
   max-width: 66ch;
   margin: 0 0 var(--spacing-stack-md);
   font-size: var(--font-size-body-large);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
 
 .ds-principle__calls-title {
@@ -1643,7 +1691,7 @@ fieldset.ds-demo-row {
   max-width: 78ch;
   margin: 0;
   font-size: var(--font-size-body-medium);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
 
 .ds-tensions {
@@ -1657,13 +1705,13 @@ fieldset.ds-demo-row {
   margin: 0 0 var(--spacing-stack-xs);
   font-family: var(--font-family-serif);
   font-size: var(--font-size-title-medium);
-  color: var(--color-text);
+  color: var(--color-text-heading);
 }
 
 .ds-tensions__body {
   margin: 0;
   font-size: var(--font-size-body-medium);
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
 
 /* 01 Tools before brand: the brand sheet out of focus, and a bench of real
@@ -1756,22 +1804,34 @@ fieldset.ds-demo-row {
   box-shadow: var(--box-shadow-overlay);
 }
 
-/* 03 Quiet surface: a secondary button at 800%, cropped by the frame. The
-   translate runs before the scale (functions apply right to left), so it is
-   the button's own half-height that centers the scaled box on the midline. */
-.ds-fig__zoom {
-  position: absolute;
-  top: 50%;
-  left: 10cqw;
-  transform: scale(8) translateY(-50%);
-  transform-origin: 0 0;
+/* 03 Quiet surface: the toast for a reading goal, small and in the corner,
+   on a surface that is otherwise empty. */
+.ds-fig--toast {
+  background: var(--color-background);
 }
 
-/* --width-breakpoint-tablet */
-@media (max-width: 767px) {
-  .ds-fig__zoom {
-    transform: scale(4) translateY(-50%);
-  }
+.ds-fig__toast {
+  position: absolute;
+  bottom: 10%;
+  left: 8cqw;
+  display: flex;
+  gap: 2cqw;
+  align-items: center;
+  padding: 2.2cqw 3.2cqw;
+  font-size: 2.6cqw;
+  line-height: 1;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: var(--border-card);
+  border-radius: var(--border-radius-notification);
+  box-shadow: var(--box-shadow-floating);
+}
+
+.ds-fig__toast-dot {
+  width: 2cqw;
+  height: 2cqw;
+  background: var(--color-success-object);
+  border-radius: var(--border-radius-circle);
 }
 
 /* 04 Everything answers back: rest, hover and press at 4x. Hover uses the
@@ -2053,38 +2113,7 @@ fieldset.ds-demo-row {
   justify-content: flex-start;
 }
 
-/* 10 Two voices of type: the serif and the grotesk, side by side. */
-.ds-fig--type {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  place-items: center center;
-}
-
-.ds-fig--type::before {
-  content: "";
-  position: absolute;
-  top: 18%;
-  bottom: 18%;
-  left: 50%;
-  border-left: var(--border-divider);
-}
-
-.ds-fig__aa {
-  font-size: 24cqw;
-  line-height: 1;
-  color: var(--color-text);
-}
-
-.ds-fig__aa--serif {
-  font-family: var(--font-family-serif);
-}
-
-.ds-fig__aa--sans {
-  font-family: var(--font-family-sans);
-  font-weight: 500;
-}
-
-/* 11 Nothing shifts: the same tabs marking the current one with weight, then
+/* 10 Nothing shifts: the same tabs marking the current one with weight, then
    with color. The guide hangs off the stable row's last tab. */
 .ds-fig--shift {
   display: flex;
@@ -2126,7 +2155,7 @@ fieldset.ds-demo-row {
   border-left: 2px dashed var(--color-border-muted);
 }
 
-/* 12 Accessible is the floor: the text ramp above the line, the decorative
+/* 11 Accessible is the floor: the text ramp above the line, the decorative
    tier below it. */
 .ds-fig--floor {
   display: flex;
@@ -2479,12 +2508,17 @@ fieldset.ds-demo-row {
    out at a specificity that wins. Kept last so it never precedes the rules it
    is overriding. Links inside demo content are deliberately left alone. */
 .ds a.ds__tab,
-.ds .ds__nav-list a {
+.ds .ds__nav-list a,
+.ds a.ds__nav-group-title {
   text-decoration: none;
 }
 
 /* Same fight for color: nav chrome stays neutral, since blue is reserved for
    links in content. */
+.ds a.ds__nav-group-title {
+  color: var(--color-text-muted);
+}
+
 .ds a.ds__tab {
   color: var(--color-text-secondary);
 }
@@ -2546,13 +2580,6 @@ fieldset.ds-demo-row {
 
   .ds__nav-list {
     display: block;
-  }
-
-  /* Stacked here, so the block padding sets the gap between links rather than
-     the tap-target height it controls in the mobile row. Tightened to keep a
-     long contents list scannable as one column. */
-  .ds__nav-list a {
-    padding: var(--spacing-inset-xs) var(--spacing-inset-sm);
   }
 
   .ds__nav-group {

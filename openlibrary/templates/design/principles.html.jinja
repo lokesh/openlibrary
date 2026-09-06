@@ -5,21 +5,8 @@
   the easing curve), so the idea has something to look at before the words.
   Figures are decorative — everything inside is inert and aria-hidden.
 #}
-{% macro nav() %}
-    <ul class="ds__nav-list">
-        {% for principle in principles %}
-            <li>
-                <a href="#{{ principle.id }}">{{ principle.title }}</a>
-            </li>
-        {% endfor %}
-        <li>
-            <a href="#tensions">Tensions</a>
-        </li>
-    </ul>
-{% endmacro %}
 {% macro body() %}
     <section class="ds-section ds-principles-intro">
-        <h2 class="ds-section__title">Principles</h2>
         <p class="ds-lead">
             What the system is going for, and where it will have to choose. Each principle comes with the hard calls it creates:
             places where both directions are reasonable and the principle is what tips the decision.
@@ -110,13 +97,10 @@
             <div class="ds-fig__sheet ds-fig__sheet--raised"></div>
         </div>
     {% elif id == "quiet-surface" %}
-        <div class="ds-fig ds-fig--zoom">
-            <div class="ds-fig__zoom">
-                <ol-button>
-                    <ol-icon name="pencil" slot="icon-start">
-                    </ol-icon>
-                    Edit
-                </ol-button>
+        <div class="ds-fig ds-fig--toast">
+            <div class="ds-fig__toast">
+                <span class="ds-fig__toast-dot"></span>
+                Reading goal reached
             </div>
         </div>
     {% elif id == "everything-answers-back" %}
@@ -183,11 +167,6 @@
             <span class="ds-fig__sel ds-fig__sel--page">3</span>
             <span class="ds-fig__sel ds-fig__sel--tab">Overview</span>
             <span class="ds-fig__sel ds-fig__sel--row">Recently added</span>
-        </div>
-    {% elif id == "two-voices-of-type" %}
-        <div class="ds-fig ds-fig--type">
-            <div class="ds-fig__aa ds-fig__aa--serif">Aa</div>
-            <div class="ds-fig__aa ds-fig__aa--sans">Aa</div>
         </div>
     {% elif id == "nothing-shifts" %}
         <div class="ds-fig ds-fig--shift">

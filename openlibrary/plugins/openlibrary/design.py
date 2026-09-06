@@ -38,15 +38,17 @@ class Section:
 
     ``has_code`` gates the show-code toggle: only the component write-ups carry
     snippets, so the other sections would render a control that toggles nothing.
+    ``has_nav`` gates the contents sidebar; a short section is just scrolled.
     """
 
     id: str
     title: str
     has_code: bool = False
+    has_nav: bool = True
 
 
 SECTIONS = (
-    Section("principles", "Principles"),
+    Section("principles", "Principles", has_nav=False),
     Section("components", "Components", has_code=True),
     Section("foundations", "Foundations"),
     Section("icons", "Icons", has_code=True),
@@ -104,7 +106,6 @@ PRINCIPLES = (
                 "A moment that deserves celebration, like finishing a reading goal or a big import. A quiet toast is on-principle and a "
                 "little cold. A flourish is warm and off-principle. Which moments earn an exception, if any?"
             ),
-            "Status colors want to be muted to fit the palette, but an error on a librarian's edit form needs to be unmissable across a busy page.",
         ),
     ),
     Principle(
@@ -115,8 +116,8 @@ PRINCIPLES = (
         "is slow.",
         (
             (
-                "A soft hover fade looks more refined in a static screenshot than an instant snap. We chose snap because it feels faster "
-                "in the hand. Designers new to the system will keep proposing the fade."
+                "A soft hover fade looks more refined when you watch it in a prototype or a demo. Under your own cursor it reads as lag. "
+                "We chose snap because it feels faster in the hand. Designers new to the system will keep proposing the fade."
             ),
         ),
     ),
@@ -130,10 +131,6 @@ PRINCIPLES = (
             (
                 "A request that is usually 80 ms but sometimes 2 s. Showing a spinner every time causes flicker on the fast path. "
                 "Delaying it means the slow path looks frozen for the delay. Pick a threshold and live with the flicker or the gap."
-            ),
-            (
-                "Skeletons reserve space but guess the shape. A wrong guess causes a jump when content lands. A spinner guesses nothing "
-                "and jumps every time. Which is worse depends on how predictable the content is."
             ),
         ),
     ),
@@ -160,10 +157,6 @@ PRINCIPLES = (
             (
                 "44 px touch targets on desktop are safer for accessibility and worse for density. Our medium control is 32 px. Where is "
                 "the floor, and does it differ by pointer?"
-            ),
-            (
-                "An overflow menu tidies a toolbar and hides the third action a cataloguer uses every minute. Tidy loses to reach on "
-                "editing surfaces and wins on reading surfaces."
             ),
         ),
     ),
@@ -196,19 +189,6 @@ PRINCIPLES = (
         ),
     ),
     Principle(
-        "two-voices-of-type",
-        "Two voices of type",
-        "A serif for what is bookish and a grotesk for what is interface, and both come from publishing: Literata was drawn for "
-        "long-form book reading and Schibsted Grotesk for a newspaper group's pages. The site has too many typefaces from its "
-        "history and we are reducing, not adding. Every text style is a named role with all its properties, never an ad hoc size.",
-        (
-            (
-                "Headings in body text still use the system sans, not the grotesk. Moving them is consistent and touches every page. "
-                "Leaving them is inconsistent and safe."
-            ),
-        ),
-    ),
-    Principle(
         "nothing-shifts",
         "Nothing shifts",
         "Layout stability is a feature. No weight change on hover or selection, tabular numbers for anything that counts, reserved "
@@ -231,10 +211,6 @@ PRINCIPLES = (
                 "Hairline dividers between result rows look better below 3:1. At full weight the list reads as a spreadsheet. We allow "
                 "extra-subtle for repeating separators, and someone will reach for it on a control border."
             ),
-            (
-                "Existing control borders sit below 3:1 because they were migrated at their original weight. Fixing them changes the look "
-                "of every button. Not fixing them leaves a known gap."
-            ),
         ),
     ),
 )
@@ -253,11 +229,6 @@ TENSIONS = (
         "Cozy vs. snappy",
         "Warm palette and serif titles pull toward slow and soft. Instant hover and short durations pull toward brisk. Color and "
         "type carry the warmth, motion carries the speed. Never soften motion to match the palette.",
-    ),
-    Tension(
-        "Continuity vs. polish",
-        "Keeping the paper and evolving the existing look means some pages lag behind the newest ones. Polish wants a clean cut. "
-        "Continuity wins, and consistency is measured per component, not per page.",
     ),
     Tension(
         "Density vs. accessibility",
