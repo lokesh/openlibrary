@@ -1,7 +1,7 @@
 """The Open Library design system docs at /developers/design.
 
-Four sections share one shell: Components (the landing section), Foundations
-(design tokens), Icons, and Playground. Each section is one long browsable page
+Five sections share one shell: Principles (the design philosophy), Components
+(the landing section), Foundations (design tokens), Icons, and Playground. Each section is one long browsable page
 — the goal is density, so an engineer can scan everything available before
 picking something.
 
@@ -46,10 +46,234 @@ class Section:
 
 
 SECTIONS = (
+    Section("principles", "Principles"),
     Section("components", "Components", has_code=True),
     Section("foundations", "Foundations"),
     Section("icons", "Icons", has_code=True),
     Section("playground", "Playground"),
+)
+
+
+@dataclass(frozen=True)
+class Principle:
+    """One entry on the Principles section.
+
+    ``hard_calls`` are the scenarios where the principle pulls against another
+    reasonable choice — the point of the page is those, not the slogans. The
+    figure for each row lives in principles.html.jinja, keyed by ``id``.
+    """
+
+    id: str
+    title: str
+    blurb: str
+    hard_calls: tuple[str, ...]
+
+
+PRINCIPLES = (
+    Principle(
+        "tools-before-brand",
+        "Tools before brand",
+        "We are building the workbench first and the storefront later. Every decision right now should make a control clearer, "
+        "faster, or more consistent. Identity work is deferred, not rejected.",
+        (
+            (
+                "A big illustrated hero on the home page would look great and is on-brand for a library. It also spends effort on the one "
+                "page librarians spend the least time on, and introduces a visual language we haven't committed to."
+            ),
+        ),
+    ),
+    Principle(
+        "keep-the-paper",
+        "Keep the paper",
+        "The beige canvas is the site's memory. We evolve it into a warm neutral ramp instead of replacing it with white, so a "
+        "returning visitor still recognizes the place. Raised surfaces go lighter, sunken go deeper, but the ground stays paper.",
+        (
+            (
+                "A dense edit form is easier to scan on pure white. Keeping the paper canvas is continuity. Switching the whole form to "
+                "white is legibility. The middle path, a white card on paper, costs a border and some air."
+            ),
+        ),
+    ),
+    Principle(
+        "quiet-surface",
+        "Quiet surface, quick hands",
+        "Polished, not extravagant. Flat controls, one accent, muted status colors, no gradients, no ornament. The interface should "
+        "be forgettable so the books and the work are not.",
+        (
+            (
+                "A moment that deserves celebration, like finishing a reading goal or a big import. A quiet toast is on-principle and a "
+                "little cold. A flourish is warm and off-principle. Which moments earn an exception, if any?"
+            ),
+            "Status colors want to be muted to fit the palette, but an error on a librarian's edit form needs to be unmissable across a busy page.",
+        ),
+    ),
+    Principle(
+        "everything-answers-back",
+        "Everything answers back",
+        "A pointer landing, a key pressed, a click made: each gets an immediate, visible response. Hover snaps in with no "
+        "transition. Press squeezes. Selection changes instantly. The site should feel like it is listening even when the server "
+        "is slow.",
+        (
+            (
+                "A soft hover fade looks more refined in a static screenshot than an instant snap. We chose snap because it feels faster "
+                "in the hand. Designers new to the system will keep proposing the fade."
+            ),
+        ),
+    ),
+    Principle(
+        "never-hide-the-wait",
+        "Never hide the wait",
+        "Loading, saving, and progress are part of the UI, not a failure state. Every request over about 100 ms shows something: a "
+        "spinner in the control, a skeleton in the region, a progress bar for the page. Slow and honest beats fast-looking and "
+        "blank.",
+        (
+            (
+                "A request that is usually 80 ms but sometimes 2 s. Showing a spinner every time causes flicker on the fast path. "
+                "Delaying it means the slow path looks frozen for the delay. Pick a threshold and live with the flicker or the gap."
+            ),
+            (
+                "Skeletons reserve space but guess the shape. A wrong guess causes a jump when content lands. A spinner guesses nothing "
+                "and jumps every time. Which is worse depends on how predictable the content is."
+            ),
+        ),
+    ),
+    Principle(
+        "motion-is-information",
+        "Motion is information",
+        "Animate only what changed: something entering, leaving, moving, or changing state. Durations are short, curves are "
+        "decisive, exits are faster than entries. Nothing moves to be pretty. Reduced motion is honored everywhere.",
+        (
+            (
+                "A subject page hero with a staged reveal would add atmosphere. It is also 600 ms of the user waiting to read. Editorial "
+                "pages are the most tempting place to break this rule."
+            ),
+        ),
+    ),
+    Principle(
+        "dense-on-the-desk",
+        "Dense on the desk",
+        "Roomy in the hand, dense on the desk. Desktop is a workbench for people who spend hours here. "
+        "Controls are compact, more fits per screen, secondary actions are "
+        "one click away rather than buried. Mobile gets larger targets and simpler layouts, but the desktop layout is not a "
+        "stretched phone.",
+        (
+            (
+                "44 px touch targets on desktop are safer for accessibility and worse for density. Our medium control is 32 px. Where is "
+                "the floor, and does it differ by pointer?"
+            ),
+            (
+                "An overflow menu tidies a toolbar and hides the third action a cataloguer uses every minute. Tidy loses to reach on "
+                "editing surfaces and wins on reading surfaces."
+            ),
+        ),
+    ),
+    Principle(
+        "keyboard-first-class",
+        "Keyboard is a first-class pointer",
+        "Editors and librarians live on the keyboard. Every control is reachable by Tab, every action has a visible focus ring, "
+        "forms submit on Enter, and focus never gets lost inside a shadow root or an overlay.",
+        (
+            (
+                "Keyboard shortcuts speed up power users and are invisible to everyone else. Adding them means also adding a way to "
+                "discover them, and that is UI we then have to design."
+            ),
+            (
+                "An affordance that only appears on hover, like an inline edit pencil, is clean and unreachable by keyboard. Showing it "
+                "always is noisy. Showing it on focus-within is the usual answer and still needs a hint for keyboard users to find it."
+            ),
+        ),
+    ),
+    Principle(
+        "one-way-to-say-it",
+        "One way to say each thing",
+        "One selected look, one hover mechanism per surface type, one scrim, one icon set, one spacing scale. When two components "
+        "disagree, one of them is wrong. Fewer patterns is the point, even when the second pattern is nicer.",
+        (
+            (
+                "A purpose-built component like the scorecard looks better tuned than the shared one. Every bespoke piece is a debt the "
+                "next person inherits. Allow it only when the shared component can't be extended."
+            ),
+        ),
+    ),
+    Principle(
+        "two-voices-of-type",
+        "Two voices of type",
+        "A serif for what is bookish and a grotesk for what is interface, and both come from publishing: Literata was drawn for "
+        "long-form book reading and Schibsted Grotesk for a newspaper group's pages. The site has too many typefaces from its "
+        "history and we are reducing, not adding. Every text style is a named role with all its properties, never an ad hoc size.",
+        (
+            (
+                "Headings in body text still use the system sans, not the grotesk. Moving them is consistent and touches every page. "
+                "Leaving them is inconsistent and safe."
+            ),
+        ),
+    ),
+    Principle(
+        "nothing-shifts",
+        "Nothing shifts",
+        "Layout stability is a feature. No weight change on hover or selection, tabular numbers for anything that counts, reserved "
+        "space for content that is loading, sticky headers that don't cover anchors. A page that jumps feels broken even when it "
+        "isn't.",
+        (
+            (
+                "Reserving space for a region that might come back empty leaves a hole. Not reserving it means a jump when it fills. For "
+                "carousels and availability data we usually can't know in advance."
+            ),
+        ),
+    ),
+    Principle(
+        "accessible-is-the-floor",
+        "Accessible is the floor",
+        "Contrast is tested in CI. Text is at least 4.5:1, control edges at least 3:1, motion respects the OS setting, and "
+        "semantics come from native elements first. A decorative tier exists for dividers and inert chrome, and only there.",
+        (
+            (
+                "Hairline dividers between result rows look better below 3:1. At full weight the list reads as a spreadsheet. We allow "
+                "extra-subtle for repeating separators, and someone will reach for it on a control border."
+            ),
+            (
+                "Existing control borders sit below 3:1 because they were migrated at their original weight. Fixing them changes the look "
+                "of every button. Not fixing them leaves a known gap."
+            ),
+        ),
+    ),
+)
+
+
+@dataclass(frozen=True)
+class Tension:
+    """Two principles that pull against each other, and how we resolve it so far."""
+
+    title: str
+    body: str
+
+
+TENSIONS = (
+    Tension(
+        "Cozy vs. snappy",
+        "Warm palette and serif titles pull toward slow and soft. Instant hover and short durations pull toward brisk. Color and "
+        "type carry the warmth, motion carries the speed. Never soften motion to match the palette.",
+    ),
+    Tension(
+        "Continuity vs. polish",
+        "Keeping the paper and evolving the existing look means some pages lag behind the newest ones. Polish wants a clean cut. "
+        "Continuity wins, and consistency is measured per component, not per page.",
+    ),
+    Tension(
+        "Density vs. accessibility",
+        "Compact controls and hairline dividers serve the librarian's screen. Target sizes and contrast serve everyone. Contrast is "
+        "non-negotiable and tested; size floors differ by pointer type.",
+    ),
+    Tension(
+        "Honesty vs. calm",
+        "Showing every wait and every state adds visual activity. The quiet surface wants less. Feedback is local and small, never "
+        "page-wide unless the page itself is what's loading.",
+    ),
+    Tension(
+        "One system vs. the special case",
+        "Editorial pages, celebrations, and purpose-built tools all want exceptions. Exceptions are allowed only where the shared "
+        "component can't be extended, and they are documented as exceptions.",
+    ),
 )
 
 
@@ -260,7 +484,7 @@ def _clean_default(value):
     """Normalize a manifest default for display. The analyzer emits the literal
     strings "null"/"undefined" for fields left unset in the constructor; show
     those as blank (an em dash) rather than a misleading default value."""
-    if value in (None, "null", "undefined"):
+    if value in {None, "null", "undefined"}:
         return ""
     return value
 
@@ -369,6 +593,8 @@ class DesignContext:
     section: Section
     sections: tuple[Section, ...] = SECTIONS
     groups: tuple[tuple[str, list[Component]], ...] = COMPONENT_GROUPS
+    principles: tuple[Principle, ...] = PRINCIPLES
+    tensions: tuple[Tension, ...] = TENSIONS
     api: dict = field(default_factory=dict)
     token_categories: list = field(default_factory=list)
     icons: list[str] = field(default_factory=list)
@@ -398,7 +624,7 @@ class design(delegate.page):
 
 
 class design_section(delegate.page):
-    path = r"/developers/design/(components|foundations|icons|playground)"
+    path = r"/developers/design/(principles|components|foundations|icons|playground)"
 
     def GET(self, section_id):
         return render_template("design", build_context(section_id))

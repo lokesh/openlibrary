@@ -29,6 +29,7 @@
 
 /* Page and component titles set in the serif; import the face so it loads. */
 @import "fonts/literata.css";
+@import "fonts/schibsted-grotesk.css";
 
 .ds {
   --ds-gutter: var(--spacing-inset-md);
@@ -1543,6 +1544,934 @@ fieldset.ds-demo-row {
 /* ----------------------------------------------------------------- desktop */
 
 /* ------------------------------------------------------------ link resets */
+
+/* -------------------------------------------------------------- principles */
+
+.ds-principles-intro .ds-lead {
+  max-width: 60ch;
+  font-size: var(--font-size-body-large);
+}
+
+/* Two columns from the desktop breakpoint, so the page is a gallery of figures
+   rather than a long scroll. The grid carries the closing rule; the sections
+   inside drop theirs so the columns don't end on staggered hairlines. */
+.ds-principles {
+  display: grid;
+  gap: var(--spacing-stack-xl) var(--spacing-inline-xl);
+  padding-bottom: var(--spacing-stack-xl);
+  margin-bottom: var(--spacing-stack-xl);
+  border-bottom: var(--border-divider);
+}
+
+/* --width-breakpoint-desktop */
+@media (min-width: 960px) {
+  .ds-principles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ds-principles .ds-principle {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+/* The figure wrapper is the container, not .ds-fig: container units on the
+   container element itself resolve against the viewport, so a padding or
+   font-size on .ds-fig--* would size to the window instead of the column. */
+.ds-principle__figure {
+  container-type: inline-size;
+  margin: 0 0 var(--spacing-stack-md);
+}
+
+/* A figure is an abstract composition built from the system's own tokens and
+   components. Nothing in one is a control: pointer events are off so the real
+   components inside (a button at 800%, a loading button) can't hover or focus.
+   Sizes are in cqw so the composition scales with the column instead of
+   cropping differently at every width. */
+.ds-fig {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: var(--border-card);
+  border-radius: var(--border-radius-card);
+  pointer-events: none;
+  user-select: none;
+}
+
+.ds-fig__caption {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-label-small);
+  letter-spacing: var(--letter-spacing-overline);
+  text-transform: var(--text-transform-overline);
+  color: var(--color-text-muted);
+}
+
+.ds-principle__number {
+  margin-bottom: var(--spacing-stack-xs);
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-label-medium);
+  color: var(--color-text-muted);
+}
+
+.ds-principle__title {
+  margin: 0 0 var(--spacing-stack-sm);
+  font-family: var(--font-family-serif);
+  font-size: var(--font-size-headline-medium);
+  line-height: 1.15;
+  color: var(--color-text);
+}
+
+.ds-principle__blurb {
+  max-width: 66ch;
+  margin: 0 0 var(--spacing-stack-md);
+  font-size: var(--font-size-body-large);
+  color: var(--color-text-secondary);
+}
+
+.ds-principle__calls-title {
+  margin: 0 0 var(--spacing-stack-xs);
+  font-size: var(--font-size-overline);
+  font-weight: var(--font-weight-overline);
+  letter-spacing: var(--letter-spacing-overline);
+  text-transform: var(--text-transform-overline);
+  color: var(--color-text-muted);
+}
+
+.ds-principle__calls {
+  max-width: 78ch;
+  margin: 0;
+  font-size: var(--font-size-body-medium);
+  color: var(--color-text-secondary);
+}
+
+.ds-tensions {
+  display: grid;
+  gap: var(--spacing-stack-md);
+  max-width: 78ch;
+  margin: 0;
+}
+
+.ds-tensions__title {
+  margin: 0 0 var(--spacing-stack-xs);
+  font-family: var(--font-family-serif);
+  font-size: var(--font-size-title-medium);
+  color: var(--color-text);
+}
+
+.ds-tensions__body {
+  margin: 0;
+  font-size: var(--font-size-body-medium);
+  color: var(--color-text-secondary);
+}
+
+/* 01 Tools before brand: the brand sheet out of focus, and a bench of real
+   controls at 1x in front of it. */
+.ds-fig--tools {
+  background: var(--color-background);
+}
+
+.ds-fig__bench {
+  position: absolute;
+  right: 6cqw;
+  bottom: 12%;
+  left: 6cqw;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-inline-md);
+  align-items: center;
+  padding: var(--spacing-inset-lg);
+  background: var(--color-surface);
+  border: var(--border-card);
+  border-radius: var(--border-radius-card);
+}
+
+/* A brand sheet: mark, name and tagline, blurred as one group. */
+.ds-fig__identity {
+  position: absolute;
+  top: 16%;
+  left: 8cqw;
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 1.5cqw 3cqw;
+  align-items: center;
+  color: var(--color-border);
+  filter: blur(0.5cqw);
+}
+
+.ds-fig__identity-mark {
+  grid-row: span 2;
+  width: 12cqw;
+  height: 12cqw;
+  background: var(--color-border);
+  border-radius: var(--border-radius-circle);
+}
+
+.ds-fig__identity-name {
+  font-family: var(--font-family-serif);
+  font-size: 9cqw;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ds-fig__identity-tagline {
+  width: 34cqw;
+  height: 2.2cqw;
+  background: var(--color-border-muted);
+  border-radius: var(--border-radius-pill);
+}
+
+/* 02 Keep the paper: the surface stack fanned out on the canvas. */
+.ds-fig--paper {
+  background: var(--color-background);
+  /* The deck animation stacks the sheets with local z-index tokens. */
+  isolation: isolate;
+}
+
+.ds-fig__sheet {
+  position: absolute;
+  width: 46cqw;
+  height: 62%;
+  border: var(--border-card);
+  border-radius: var(--border-radius-card);
+}
+
+.ds-fig__sheet--sunken {
+  top: 8%;
+  left: 14cqw;
+  background: var(--color-surface-sunken);
+}
+
+.ds-fig__sheet--surface {
+  top: 19%;
+  left: 27cqw;
+  background: var(--color-surface);
+}
+
+.ds-fig__sheet--raised {
+  top: 30%;
+  left: 40cqw;
+  background: var(--color-surface-raised);
+  box-shadow: var(--box-shadow-overlay);
+}
+
+/* 03 Quiet surface: a secondary button at 800%, cropped by the frame. The
+   translate runs before the scale (functions apply right to left), so it is
+   the button's own half-height that centers the scaled box on the midline. */
+.ds-fig__zoom {
+  position: absolute;
+  top: 50%;
+  left: 10cqw;
+  transform: scale(8) translateY(-50%);
+  transform-origin: 0 0;
+}
+
+/* --width-breakpoint-tablet */
+@media (max-width: 767px) {
+  .ds-fig__zoom {
+    transform: scale(4) translateY(-50%);
+  }
+}
+
+/* 04 Everything answers back: rest, hover and press at 4x. Hover uses the
+   real button's tokens. Press is exaggerated on purpose: the real squeeze is
+   --press-scale and the fill stays on hover, but at a glance that reads as no
+   change at all. */
+.ds-fig--states {
+  display: flex;
+  gap: 6cqw;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6cqw;
+}
+
+.ds-fig__state-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+  align-items: center;
+}
+
+.ds-fig__state,
+.ds-fig__focused {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 12.8cqw;
+  padding: 0 4.8cqw;
+  background: var(--color-surface);
+  border: 0.4cqw solid var(--color-border-subtle);
+  border-radius: 3.2cqw;
+  font-family: var(--font-family-button);
+  font-size: 5.6cqw;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.ds-fig__state--hover,
+.ds-fig__state--press {
+  background: var(--color-control-hover);
+  border-color: var(--color-border-muted);
+}
+
+.ds-fig__state--press {
+  background: var(--color-border-subtle);
+  border-color: var(--color-border);
+  transform: scale(0.88);
+}
+
+/* 05 Never hide the wait: a page progress bar, a skeleton, a loading button. */
+.ds-fig__progress {
+  position: absolute;
+  top: 16%;
+  right: 8cqw;
+  left: 8cqw;
+  height: 1.6cqw;
+  overflow: hidden;
+  background: var(--color-border-subtle);
+  border-radius: var(--border-radius-pill);
+}
+
+.ds-fig__progress-fill {
+  width: 62%;
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--border-radius-pill);
+}
+
+.ds-fig__skeleton {
+  position: absolute;
+  top: 40%;
+  left: 8cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4cqw;
+  width: 44cqw;
+}
+
+.ds-fig__bone {
+  display: block;
+  height: 2.8cqw;
+  background: var(--color-border-subtle);
+  border-radius: var(--border-radius-sm);
+}
+
+.ds-fig__bone--w70 {
+  width: 70%;
+}
+
+.ds-fig__bone--w45 {
+  width: 45%;
+}
+
+.ds-fig__bone--w60 {
+  width: 60%;
+}
+
+.ds-fig__wait-button {
+  position: absolute;
+  top: 44%;
+  right: 8cqw;
+  transform: scale(3);
+  transform-origin: 100% 0;
+}
+
+/* 06 Motion is information: the enter curve against linear, and the
+   duration scale as bars. */
+.ds-fig__curve {
+  position: absolute;
+  top: 14%;
+  left: 8cqw;
+  width: 34cqw;
+  height: 72%;
+  overflow: visible;
+}
+
+.ds-fig__curve-linear {
+  fill: none;
+  stroke: var(--color-border-muted);
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+}
+
+.ds-fig__curve-path {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.ds-fig__durations {
+  position: absolute;
+  inset: 16% 8cqw 16% 52cqw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ds-fig__duration {
+  display: flex;
+  gap: var(--spacing-inline-md);
+  align-items: center;
+}
+
+.ds-fig__duration-bar {
+  flex: none;
+  width: calc(var(--ds-fig-ms) / 400 * 60%);
+  height: 1.4cqw;
+  background: var(--color-primary);
+  border-radius: var(--border-radius-pill);
+}
+
+.ds-fig__duration-label {
+  font-family: var(--font-family-code);
+  font-size: var(--font-size-label-small);
+  white-space: nowrap;
+  color: var(--color-text-muted);
+}
+
+/* 07 Dense on the desk: a workbench of 26px controls beside a phone of 48px ones. */
+.ds-fig--density {
+  display: flex;
+  gap: 6cqw;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-sunken);
+}
+
+.ds-fig__desk {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1cqw;
+  width: 52cqw;
+  padding: 2cqw;
+  background: var(--color-surface);
+  border: var(--border-card);
+  border-radius: var(--border-radius-card);
+}
+
+.ds-fig__hand {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+  width: 18cqw;
+  padding: 2.4cqw 2cqw;
+  background: var(--color-surface);
+  border: var(--border-card);
+  border-radius: var(--border-radius-overlay);
+}
+
+.ds-fig__block {
+  display: block;
+  background: var(--color-surface-sunken);
+  border: var(--border-input);
+  border-radius: var(--border-radius-button);
+}
+
+.ds-fig__block--sm {
+  height: 2.6cqw;
+}
+
+.ds-fig__block--lg {
+  height: 4.8cqw;
+}
+
+/* 08 Keyboard: a keycap and a focused control at 4x, ring and offset scaled. */
+.ds-fig--focus {
+  display: flex;
+  gap: 8cqw;
+  align-items: center;
+  justify-content: center;
+}
+
+.ds-fig__keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14cqw;
+  height: 9cqw;
+  background: var(--color-surface-sunken);
+  border: var(--border-card);
+  border-bottom-width: 0.6cqw;
+  border-radius: 1.6cqw;
+  box-shadow: var(--box-shadow-raised);
+  font-family: var(--font-family-code);
+  font-size: 2.8cqw;
+  color: var(--color-text-secondary);
+}
+
+.ds-fig__focused {
+  box-shadow:
+    0 0 0 0.8cqw var(--color-surface),
+    0 0 0 1.6cqw var(--color-focus-ring);
+}
+
+/* 09 One way to say each thing: five shapes, one selected look. */
+.ds-fig--selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3cqw;
+  place-content: center center;
+  align-items: center;
+  padding: 6cqw 10cqw;
+}
+
+.ds-fig__sel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 6.4cqw;
+  padding: 0 3cqw;
+  background: var(--color-control-selected-bg);
+  border-radius: 1.6cqw;
+  font-family: var(--font-family-button);
+  font-size: 3cqw;
+  font-weight: 500;
+  color: var(--color-link);
+}
+
+.ds-fig__sel--chip {
+  border-radius: var(--border-radius-pill);
+}
+
+.ds-fig__sel--page {
+  width: 6.4cqw;
+  padding: 0;
+}
+
+.ds-fig__sel--tab {
+  border-bottom: 0.5cqw solid var(--color-link);
+  border-radius: 1cqw 1cqw 0 0;
+}
+
+.ds-fig__sel--row {
+  flex-basis: 100%;
+  justify-content: flex-start;
+}
+
+/* 10 Two voices of type: the serif and the grotesk, side by side. */
+.ds-fig--type {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center center;
+}
+
+.ds-fig--type::before {
+  content: "";
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: 50%;
+  border-left: var(--border-divider);
+}
+
+.ds-fig__aa {
+  font-size: 24cqw;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.ds-fig__aa--serif {
+  font-family: var(--font-family-serif);
+}
+
+.ds-fig__aa--sans {
+  font-family: var(--font-family-sans);
+  font-weight: 500;
+}
+
+/* 11 Nothing shifts: the same tabs marking the current one with weight, then
+   with color. The guide hangs off the stable row's last tab. */
+.ds-fig--shift {
+  display: flex;
+  flex-direction: column;
+  gap: 5cqw;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 10cqw;
+  font-family: var(--font-family-sans);
+  font-size: 6cqw;
+  line-height: 1;
+  color: var(--color-text-secondary);
+}
+
+.ds-fig__tabs {
+  display: flex;
+  gap: 5cqw;
+}
+
+.ds-fig__tab--bold {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.ds-fig__tab--color {
+  color: var(--color-link);
+}
+
+.ds-fig__tab--guide {
+  position: relative;
+}
+
+.ds-fig__tab--guide::before {
+  content: "";
+  position: absolute;
+  top: -12cqw;
+  bottom: -1.5cqw;
+  left: 0;
+  border-left: 2px dashed var(--color-border-muted);
+}
+
+/* 12 Accessible is the floor: the text ramp above the line, the decorative
+   tier below it. */
+.ds-fig--floor {
+  display: flex;
+  flex-direction: column;
+  gap: 2cqw;
+  justify-content: center;
+  padding: 0 10cqw;
+}
+
+.ds-fig__floor-samples {
+  display: flex;
+  gap: 8cqw;
+  align-items: baseline;
+  font-family: var(--font-family-serif);
+  font-size: 12cqw;
+  line-height: 1;
+}
+
+.ds-fig__floor-samples--below {
+  font-size: 8cqw;
+}
+
+.ds-fig__floor-sample--ink {
+  color: var(--color-text);
+}
+
+.ds-fig__floor-sample--secondary {
+  color: var(--color-text-secondary);
+}
+
+.ds-fig__floor-sample--muted {
+  color: var(--color-text-muted);
+}
+
+.ds-fig__floor-sample--decorative {
+  color: var(--color-border-muted);
+}
+
+.ds-fig__floor-line {
+  position: relative;
+  border-top: 0.4cqw solid var(--color-text);
+}
+
+.ds-fig__floor-line .ds-fig__caption {
+  position: absolute;
+  top: 0.8cqw;
+  right: 0;
+}
+
+/* ----------------------------------------------------- figure animations */
+
+/* Looping illustrations. Static by default: every animation here is behind
+   the no-preference query, so a reduced-motion reader gets the still figures
+   above unchanged. Timings are illustration pacing, not the motion tokens;
+   only the curves reuse them. */
+@media (prefers-reduced-motion: no-preference) {
+  /* 02 Keep the paper: a deck. Each sheet makes a quick move on the enter
+     curve, then rests; the rests take most of the cycle. Three sheets a third
+     of a cycle apart, so one is always about to move. */
+  .ds-fig--paper .ds-fig__sheet {
+    top: 8%;
+    left: 14cqw;
+    background: var(--color-surface);
+    animation: ds-fig-deck 7.5s var(--ease-enter) infinite;
+  }
+
+  .ds-fig--paper .ds-fig__sheet--raised {
+    animation-delay: -5s;
+  }
+
+  .ds-fig--paper .ds-fig__sheet--surface {
+    animation-delay: -2.5s;
+  }
+
+  /* 04 The press squeezes on a loop. */
+  .ds-fig__state--press {
+    animation: ds-fig-press 3s infinite;
+  }
+
+  /* 05 The bar fills and restarts; the skeleton breathes. */
+  .ds-fig__progress-fill {
+    animation: ds-fig-fill 6s var(--ease-out-quart) infinite;
+  }
+
+  .ds-fig__bone {
+    animation: ds-fig-breathe 1.6s ease-in-out infinite;
+  }
+
+  /* 06 Each bar grows at its own token duration on the enter curve, holds,
+     then all reset together every 2.4s. */
+  .ds-fig__duration-bar {
+    transform-origin: 0 50%;
+    animation: 2.4s var(--ease-enter) infinite;
+  }
+
+  .ds-fig__duration-bar--80 {
+    animation-name: ds-fig-grow-80;
+  }
+
+  .ds-fig__duration-bar--150 {
+    animation-name: ds-fig-grow-150;
+  }
+
+  .ds-fig__duration-bar--200 {
+    animation-name: ds-fig-grow-200;
+  }
+
+  .ds-fig__duration-bar--300 {
+    animation-name: ds-fig-grow-300;
+  }
+
+  .ds-fig__duration-bar--400 {
+    animation-name: ds-fig-grow-400;
+  }
+
+  /* 08 The key goes down, the ring appears, then both release. */
+  .ds-fig__keycap {
+    animation: ds-fig-keypress 4s step-end infinite;
+  }
+
+  .ds-fig__focused {
+    animation: ds-fig-ring 4s step-end infinite;
+  }
+
+  /* 11 The top row toggles weight and jumps; the bottom row toggles colour
+     and holds still. */
+  .ds-fig__tab--bold {
+    animation: ds-fig-weight 2.4s step-end infinite;
+  }
+
+  .ds-fig__tab--color {
+    animation: ds-fig-colour 2.4s step-end infinite;
+  }
+}
+
+/* Each move takes about 8% of the cycle (600ms); the rest of each third is
+   the hold. The timing function is set on the frame a move starts from. */
+@keyframes ds-fig-deck {
+  0% {
+    translate: -2cqw 1cqw;
+    rotate: -4deg;
+    scale: 0.96;
+    z-index: var(--z-index-local-1);
+    opacity: 0;
+    box-shadow: none;
+    animation-timing-function: var(--ease-enter);
+  }
+
+  8%,
+  33.3% {
+    translate: 0 0;
+    rotate: -2.5deg;
+    scale: 0.98;
+    z-index: var(--z-index-local-1);
+    opacity: 1;
+    box-shadow: none;
+    animation-timing-function: var(--ease-enter);
+  }
+
+  41%,
+  66.6% {
+    translate: 13cqw 7cqw;
+    rotate: -0.5deg;
+    scale: 1;
+    z-index: var(--z-index-local-2);
+    box-shadow: var(--box-shadow-floating);
+    animation-timing-function: var(--ease-enter);
+  }
+
+  74%,
+  92% {
+    translate: 26cqw 14cqw;
+    rotate: 1.5deg;
+    scale: 1;
+    z-index: var(--z-index-local-3);
+    opacity: 1;
+    box-shadow: var(--box-shadow-overlay);
+    animation-timing-function: var(--ease-exit);
+  }
+
+  100% {
+    translate: 38cqw 6cqw;
+    rotate: 7deg;
+    scale: 1.03;
+    z-index: var(--z-index-local-3);
+    opacity: 0;
+    box-shadow: var(--box-shadow-overlay);
+  }
+}
+
+@keyframes ds-fig-press {
+  0%,
+  55% {
+    transform: scale(1);
+    background: var(--color-control-hover);
+    border-color: var(--color-border-muted);
+    animation-timing-function: step-end;
+  }
+
+  58%,
+  88% {
+    transform: scale(0.88);
+    background: var(--color-border-subtle);
+    border-color: var(--color-border);
+  }
+
+  91%,
+  100% {
+    transform: scale(1);
+    background: var(--color-control-hover);
+    border-color: var(--color-border-muted);
+  }
+}
+
+@keyframes ds-fig-fill {
+  0% {
+    width: 0;
+  }
+
+  85%,
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes ds-fig-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* Growth ends at duration / 2400ms; the rest of each cycle is the hold. */
+@keyframes ds-fig-grow-80 {
+  0% {
+    transform: scaleX(0);
+  }
+
+  3.33%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ds-fig-grow-150 {
+  0% {
+    transform: scaleX(0);
+  }
+
+  6.25%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ds-fig-grow-200 {
+  0% {
+    transform: scaleX(0);
+  }
+
+  8.33%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ds-fig-grow-300 {
+  0% {
+    transform: scaleX(0);
+  }
+
+  12.5%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ds-fig-grow-400 {
+  0% {
+    transform: scaleX(0);
+  }
+
+  16.67%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ds-fig-keypress {
+  0%,
+  100% {
+    translate: 0 0;
+    border-bottom-width: 0.6cqw;
+  }
+
+  15%,
+  30% {
+    translate: 0 0.4cqw;
+    border-bottom-width: 0.2cqw;
+  }
+}
+
+@keyframes ds-fig-ring {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0.8cqw var(--color-surface),
+      0 0 0 1.6cqw transparent;
+  }
+
+  30%,
+  80% {
+    box-shadow:
+      0 0 0 0.8cqw var(--color-surface),
+      0 0 0 1.6cqw var(--color-focus-ring);
+  }
+}
+
+@keyframes ds-fig-weight {
+  0%,
+  100% {
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+
+  50% {
+    font-weight: 700;
+    color: var(--color-text);
+  }
+}
+
+@keyframes ds-fig-colour {
+  0%,
+  100% {
+    color: var(--color-text-secondary);
+  }
+
+  50% {
+    color: var(--color-link);
+  }
+}
 
 /* The site-wide `a:link { text-decoration: underline }` from base/common.css both
    outweighs a lone class and lands after these rules, and decoration inherited
