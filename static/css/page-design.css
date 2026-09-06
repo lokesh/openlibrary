@@ -80,7 +80,8 @@ html:has(.ds) {
 .ds__title {
   margin: 0;
   font-family: var(--font-family-serif);
-  font-size: var(--font-size-headline-medium);
+  font-size: var(--font-size-title-large);
+  font-weight: 500;
   color: var(--color-text-heading);
 }
 
@@ -134,9 +135,11 @@ html:has(.ds) {
   font-weight: 600;
 }
 
+/* Much lighter than the current tab's bar, so a hovered neighbour reads as a
+   preview rather than extending the active underline into one long line. */
 @media (hover: hover) and (pointer: fine) {
   .ds__tab:not(.ds__tab--current):hover {
-    border-bottom-color: var(--color-border-hover);
+    border-bottom-color: var(--color-border-muted);
   }
 }
 
