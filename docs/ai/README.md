@@ -249,7 +249,7 @@ These companion docs cover specific areas in depth:
 
 - [Accessibility](web-components.md#accessibility) — focus, ARIA across shadow roots, keyboard patterns for Lit components
 - [CSS](css.md) — BEM naming, selector rules, tokens in practice, bundle sizes, CSS-to-template wiring
-- [Design](design.md) — UI design patterns: typography, layout shift prevention, design tokens, animations, mobile
+- [Design](design.md) — UI rules and their scope: typography, RTL, the component inventory (what to use, what to avoid), icons, design tokens, overlays, animations, mobile, and what enforces each rule
 - [Web Component Standards](web-components.md) — When to build a component, Lit conventions, accessibility, events, focus + shadow DOM
 - [Internationalization](i18n.md) — `$_()` in templates, the `data-i18n` bridge for client-rendered strings
 

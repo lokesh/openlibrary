@@ -10,6 +10,8 @@ These rules apply to every line you write or modify, in any file. Much of `stati
 - **Fix the declaration you touch, not the file.** Changing a hover background? Move that value to a semantic token. Rewriting the whole rule block? Gate it to hover-capable pointers too. Leave untouched neighbors alone — whole-file migrations are their own PR.
 - **`legacy.css` and `legacy-tools.css` are delete-only.** Move rules out; never edit them toward compliance in place.
 
+The principles these rules serve — and the tensions between them — are on `/developers/design/principles`, registered as `PRINCIPLES` and `TENSIONS` in `openlibrary/plugins/openlibrary/design.py`. When a rule here feels arbitrary, that page has the reason; when two rules conflict, the *Tensions* list says which wins.
+
 ## Typography
 
 ### Preventing Layout Shift
@@ -42,6 +44,21 @@ These rules apply to every line you write or modify, in any file. Much of `stati
 }
 ```
 
+### Text-style roles
+
+`tokens/typography.css` defines text styles as one token per property, grouped by the role the text plays. Apply a role's tokens **together** — setting the size from the token and hand-coding the weight or tracking is how six copies of "overline" drifted apart. The first role is **overline**, the small all-caps heading over a group (a popover's "Sort by", the search modal's "Top results", a scorecard label):
+
+```css
+.section-heading {
+  font-size: var(--font-size-overline);
+  font-weight: var(--font-weight-overline);
+  letter-spacing: var(--letter-spacing-overline);
+  text-transform: var(--text-transform-overline);
+}
+```
+
+Headings share the body ink (`--color-text-heading` is `--color-text`); size and weight carry the hierarchy, not color.
+
 ## Visual Design
 
 ### Scroll Margins
@@ -67,6 +84,21 @@ Custom properties can't be used in `@media`, so breakpoints are hard-coded px va
 @media (min-width: 768px) { … }
 @media (max-width: 767px) { … }
 ```
+
+### Right-to-left
+
+Open Library serves Arabic, Hebrew, and Persian readers, so layout must mirror under `dir="rtl"`. Use **logical properties** for anything horizontal — `margin-inline-start`, `padding-inline`, `inset-inline-end`, `text-align: start` — and they mirror for free. `left`, `right`, `margin-left`, and `text-align: left` do not, and are the bugs the playground's *Right-to-left* check (`/developers/design/playground#rtl`) exists to catch.
+
+Glyphs that point in the reading direction (a "next" arrow, a toggle knob's travel) don't mirror on their own; flip them explicitly, scoped to the host:
+
+```css
+/* OlPagination.js — the arrow points "forward" in both directions */
+:host(:dir(rtl)) .pagination-arrow ol-icon {
+  transform: scaleX(-1);
+}
+```
+
+Symmetric glyphs (close, search, chevron-down) stay as they are.
 
 ## Components
 
@@ -97,6 +129,24 @@ Before writing new markup or CSS, check whether an existing component already do
 | Icon | `ol-icon` | One icon from the Open Library set | Only for icons from the set; don't use it to embed arbitrary SVG. |
 
 `ol-otp-login` is also registered but is a single login flow, not a reusable component. For when to build something new versus enhance a template, see [When to Build a Component](web-components.md#when-to-build-a-component).
+
+### Menu rows
+
+Rows inside a panel — the menu, options, and select popovers, the browse popover, the hamburger drawer, the design-site nav — are one shape, and share the tokens in `tokens/control-heights.css`:
+
+- **Height** is `--menu-row-height`, applied as `min-height` so a row with a description can grow. Keep the row's own vertical padding under it, or the padding sets the height and rows drift apart again. On hover-capable pointers the token drops to `--control-height-medium`, so a menu reads as a stack of medium controls.
+- **Inset as a pill.** A row sits `--menu-row-inset` in from the panel edge and takes `--border-radius-button`, so its hover fill reads as a pill inside the panel rather than a band running to the edges. It gives that inset back as `--menu-row-padding-inline`, which keeps the label at 16px from the panel. A light-DOM panel that can't put a margin on its rows (the browse popover, the drawer) puts the inset on the panel's side padding instead; the row padding is the same either way.
+- **Hover is `--color-hover-overlay`**, so it darkens whatever the panel is painted on. No press-scale — see [Press feedback](#press-feedback-self-contained-controls-squeeze-rows-and-surfaces-dont).
+- **Selected rows get no tint and no weight change.** The radio or checkbox already carries the state, and a tinted row looks hovered. Where there is no control (`ol-menu-popover`, the design nav) the label goes `--color-link` — color only, so nothing re-measures.
+
+```css
+.item {
+  min-height: var(--menu-row-height);
+  margin-inline: var(--menu-row-inset);
+  padding-inline: var(--menu-row-padding-inline);
+  border-radius: var(--border-radius-button);
+}
+```
 
 ## Icons
 
@@ -152,7 +202,7 @@ The three border weights are a scale, not three names for the same job. `--color
 
 You will find existing control borders on `--color-border-muted`. They were migrated at their original weight so the token rollout stayed a no-op; that they sit below 3:1 is a pre-existing gap to fix deliberately, not a precedent to copy.
 
-Selected has one look: `--color-control-selected-bg` with `--color-link` text, shared by `ol-button[selected]`, the toggle's button variant, the current pagination page, the Scorecard's active tab, and the editor's pressed toolbar buttons. A grey fill for "selected" is legacy, not a second option.
+Selected has one look: `--color-control-selected-bg` with `--color-link` text, shared by `ol-button[selected]`, the toggle's button variant, the current pagination page, the Scorecard's active tab, and the editor's pressed toolbar buttons. A grey fill for "selected" is legacy, not a second option. The exception is a row inside a menu panel, where the radio or checkbox carries the state and the row itself stays untinted — see [Menu rows](#menu-rows).
 
 Hover has two tokens, split by mechanism rather than by surface. `--color-hover-overlay` is a translucent overlay for flat interactive rows (popover items, menu items, list rows) — it composes over whatever surface it lands on, so a row on `--color-surface-sunken` or `-header` still darkens instead of matching its own background. `--color-control-hover` is an opaque fill for raised controls, and must stay opaque: alpha fed to `--control-surface` inverts the specular highlight.
 
@@ -182,7 +232,7 @@ Always use semantic tokens. If one doesn't exist for your use case, create it in
 | `static/css/tokens/borders.css` | Border and shadow tokens, plus the modal overlay scrim (`--overlay-backdrop-color` / `--overlay-backdrop-blur`) |
 | `static/css/tokens/z-index.css` | Stacking primitives and semantic layers (`--z-index-sticky`, `-dropdown`, `-modal`, `-toast`, …) plus `--z-index-local-*` for layering inside an `isolation: isolate` root |
 | `static/css/tokens/breakpoints.css` | Breakpoint scale — reference only, see [Breakpoints](#breakpoints) |
-| `static/css/tokens/control-heights.css` | Outer heights for single-line controls |
+| `static/css/tokens/control-heights.css` | Outer heights for single-line controls, plus the menu-row height and pill inset (`--menu-row-height` / `-inset` / `-padding-inline`) |
 | `static/css/tokens/icon-sizes.css` | Icon size and per-size stroke tokens |
 | `static/css/tokens/line-heights.css` | Line-height scale |
 
@@ -191,6 +241,10 @@ Always use semantic tokens. If one doesn't exist for your use case, create it in
 CSS custom properties inherit through the shadow boundary, so design tokens work directly inside Lit component `static styles` blocks without any extra wiring.
 
 ## Overlays
+
+### Every floating surface shares one edge
+
+A popover panel, a dialog, a drawer, a toast, and the mobile tray are the same object — a surface floating over the page — and take the same three tokens from `tokens/borders.css`: `--border-overlay`, `--border-radius-overlay`, `--box-shadow-overlay`. The hairline border draws the edge, which is what lets the shadow stay light enough to read as depth rather than a smudge. Don't drop the border on one surface or hand-roll a heavier shadow on another; a toast with a different edge from the popover next to it reads as a third kind of thing.
 
 ### Blur follows modality, not viewport width
 
@@ -378,11 +432,11 @@ Never write a raw `cubic-bezier()` or a bare `200ms` in a component. If a surfac
 
 ### Honor `prefers-reduced-motion`
 
-Every transition and animation gets a `prefers-reduced-motion: reduce` override that sets it to `none`. Motion is enhancement; users who asked for less get the end state immediately. Ten of the eleven animated Lit components already do this — match them, including in `static/css`, where most animated files still don't.
+Every transition and animation gets a `prefers-reduced-motion: reduce` override that sets it to `none`. Motion is enhancement; users who asked for less get the end state immediately. Every animated Lit component does this — match them, including in `static/css`, where most animated files still don't. Looping illustrations (the design page's principle figures) are gated the same way.
 
 ```css
 .panel {
-  transition: transform 200ms ease-out;
+  transition: transform var(--duration-base) var(--ease-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -467,6 +521,10 @@ What checks each rule today. "Review" means only a human or the Copilot UI check
 | Blur follows modality; shared scrim tokens | Review |
 | 16px text-entry controls | Review |
 | Hover gated to hover-capable pointers | Review |
+| Menu rows on the shared height/inset tokens; selected rows untinted | Review |
+| Overline via the typography role tokens, applied together | Review |
+| Logical properties; directional glyphs flipped under `:dir(rtl)` | Review |
+| Floating surfaces on the shared overlay border/radius/shadow | Review |
 | Reduced-motion override on every transition/animation | Review |
 | Breakpoints on the token scale, `max-width: N-1` | Review |
 | Icons via macro / `ol-icon`, never inline SVG | Review |

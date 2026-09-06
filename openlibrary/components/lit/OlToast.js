@@ -252,14 +252,9 @@ export class OlToast extends LitElement {
         }
 
         /* The close control is an <ol-button shape="icon" variant="ghost" size="small">,
-           which paints itself; only the glyph size lives here. */
+           which paints itself and sizes its glyph. */
         .toast__close {
             flex-shrink: 0;
-        }
-
-        .toast__close ol-icon {
-            width: 16px;
-            height: 16px;
         }
     `;
 
@@ -438,7 +433,7 @@ export class OlToast extends LitElement {
                     size="small"
                     aria-label=${this.labelClose}
                     @click=${() => this.close('close-button')}
-                ><ol-icon name="x"></ol-icon></ol-button>
+                ><ol-icon name="x" size="sm"></ol-icon></ol-button>
                 ${!this.persistent ? html`<div class="toast__progress"></div>` : ''}
             </div>
         `;

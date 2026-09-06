@@ -276,13 +276,6 @@ export class OlDialog extends LitElement {
             font-weight: 600;
         }
 
-        /* The close control is an <ol-button shape="icon" variant="ghost">, which
-           paints itself; only the glyph size lives here. */
-        .close-button ol-icon {
-            width: 20px;
-            height: 20px;
-        }
-
         .body {
             padding: var(--ol-dialog-padding);
             overflow-y: auto;
