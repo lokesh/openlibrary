@@ -1,0 +1,110 @@
+/**
+ * Editing mode (openlibrary/plugins/openlibrary/js/editing-mode/): the light-DOM
+ * side of librarian tools — the selection affordance on every element that
+ * carries data-ol-key, the docked-tray page offset, and the header switch.
+ * The tray, preview and health strip style themselves in shadow DOM.
+ */
+
+/* The page steps aside for the docked tray at desktop widths. */
+@media (min-width: 1100px) {
+  body.editing-mode:not(.tray-collapsed) {
+    padding-right: var(--tray-width, 340px);
+  }
+}
+
+/* Header switch */
+.header-bar .editing-component {
+  display: flex;
+  align-items: center;
+  margin-inline-start: var(--spacing-xs);
+  order: 4; /* beside the account menu; the header lays out by order, not DOM */
+}
+
+@media only screen and (max-width: 35.5em) {
+  .header-bar .editing-component {
+    display: none;
+  }
+}
+
+/* Selection affordance: a checkbox in the top-left of any selectable block.
+   Present only in editing mode; the row itself is never a click target. */
+.editing-mode .ol-selectable--anchor {
+  position: relative;
+}
+
+.editing-mode .ol-select {
+  position: absolute;
+  top: var(--spacing-3xs);
+  left: var(--spacing-3xs);
+  z-index: var(--z-index-local-2);
+  display: inline-flex;
+  padding: var(--spacing-2xs);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-surface);
+  box-shadow: var(--box-shadow-raised);
+  line-height: 0;
+  cursor: pointer;
+}
+
+.editing-mode .ol-select__input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.editing-mode .ol-selectable--selected {
+  outline: 2px solid var(--color-control-selected-border);
+  outline-offset: -2px;
+  background-color: var(--color-control-selected-bg);
+  border-radius: var(--border-radius-md);
+}
+
+.editing-mode .ol-selectable--focused {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
+  border-radius: var(--border-radius-md);
+}
+
+.editing-mode .ol-selectable--touched {
+  box-shadow: inset 4px 0 0 var(--color-success-object);
+}
+
+/* Table cells (the editions table) keep the checkbox inside the cell. */
+.editing-mode .ol-select--cell {
+  top: var(--spacing-2xs);
+  left: var(--spacing-2xs);
+}
+
+/* Carousel cards: the cover is the whole card, so lift the checkbox above it. */
+.editing-mode .ol-select--card {
+  top: var(--spacing-xs);
+  left: var(--spacing-xs);
+}
+
+/* Inline records (author links in a byline) get an explicit add button
+   (an x-small circle ol-button) after the link instead of a hidden hit area. */
+.editing-mode .ol-select-inline {
+  margin-inline-start: var(--spacing-3xs);
+  vertical-align: middle;
+}
+
+/* The tagger reused from the ILE, now inside a dialog: no fixed positioning,
+   and the dialog's header replaces the tagger's own. */
+.editing-mode-tagger .bulk-tagging-form {
+  position: static;
+  width: auto;
+  max-width: none;
+  box-shadow: none;
+  border: 0;
+}
+
+.editing-mode-tagger .form-header {
+  display: none;
+}
+
+/* Health strip slot only takes space once filled. */
+.record-health-slot:empty {
+  display: none;
+}

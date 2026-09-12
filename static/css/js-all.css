@@ -7,6 +7,7 @@
 @import "components/cbox.css";
 @import "components/native-dialog.css";
 @import "components/flash-messages.css";
+@import "components/editing-mode.css";
 @import "components/jquery.autocomplete.css";
 
 @import "components/read-statuses.css";

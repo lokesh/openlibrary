@@ -52,7 +52,17 @@ $code:
   else:
     full_work_title = doc.get('title', '') + (': ' + doc['subtitle'] if doc.get('subtitle') else '')
 
-<li class="searchResultItem sri--w-main" itemscope itemtype="https://schema.org/Book" $:attrs>
+$# The markup contract for librarian tools (editing-mode/selection.js): every
+$# rendered record says which record it is. Works carry the surfaced edition too.
+$ ol_key = doc.get('key', '') or ''
+$ ol_edition = ''
+$if doc_type == 'infogami_edition':
+  $ ol_key = (edition_work.get('key') if edition_work else '') or ''
+  $ ol_edition = doc.get('key', '') or ''
+$elif doc_type == 'solr_edition' and selected_ed is not doc:
+  $ ol_edition = selected_ed.get('key', '') or ''
+$ ol_edition_attr = ('data-ol-edition="%s"' % ol_edition) if ol_edition else ''
+<li class="searchResultItem sri--w-main" itemscope itemtype="https://schema.org/Book" data-ol-key="$ol_key" $:ol_edition_attr $:attrs>
   $ blur_cover = "bookcover--blur" if blur else ""
   $if 'log' in doc:
     <div class="feed-item">
@@ -115,7 +125,8 @@ $code:
               author_data = [
                 {
                   'name': a.get('name') or a.get('author', {}).get('name'),
-                  'url': (a.get('url') or a.get('key') or a.get('author', {}).get('url') or a.get('author', {}).get('key'))
+                  'url': (a.get('url') or a.get('key') or a.get('author', {}).get('url') or a.get('author', {}).get('key')),
+                  'key': (a.get('key') or a.get('author', {}).get('key'))
                 }
                 for a in authors
               ]

@@ -1156,6 +1156,7 @@ def setup():
         design,
         events,
         home,
+        librarians,
         partials,
         sentry,
         stats,
@@ -1173,6 +1174,7 @@ def setup():
     sentry.setup()
     home.setup()
     design.setup()
+    librarians.setup()
     borrow_home.setup()
     stats.setup()
     events.setup()

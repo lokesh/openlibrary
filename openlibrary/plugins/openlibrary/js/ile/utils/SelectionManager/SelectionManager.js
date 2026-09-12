@@ -207,7 +207,10 @@ export default class SelectionManager {
                 action.applies_to_type.forEach(type => items.push(...this.selectedItems[type]));
                 if (action.multiple_only ? items.length > 1 : items.length > 0)
                     if (action.href) {
-                        this.ile.$actions.append($(`<a target="_blank" href="${action.href(this.getOlidsFromSelectionList(items))}">${action.name}</a>`));
+                        const over = action.warn_above && items.length > action.warn_above;
+                        const label = over ? `${action.name} (first ${action.warn_above} of ${items.length})` : action.name;
+                        const title = over ? `The merge page loads at most ${action.warn_above} records at a time.` : '';
+                        this.ile.$actions.append($(`<a target="_blank" title="${title}" href="${action.href(this.getOlidsFromSelectionList(items))}">${label}</a>`));
                     } else if (action.onclick && action.name === 'Tag Works') {
                         this.ile.$actions.append($(`<a href="javascript:;">${action.name}</a>`).on('click', () => this.ile.updateAndShowBulkTagger(this.getOlidsFromSelectionList(items))));
                     }
@@ -488,7 +491,7 @@ SelectionManager.SELECTION_PROVIDERS = [
  */
 SelectionManager.ACTIONS = [
     {
-        applies_to_type: ['work', 'edition'],
+        applies_to_type: ['work'],
         requires_type: ['work'],
         multiple_only: false,
         name: 'Tag Works',
@@ -502,10 +505,12 @@ SelectionManager.ACTIONS = [
         href: olids => `/account/lists/add?seeds=${olids.join(',')}`,
     },
     {
-        applies_to_type: ['work', 'edition'],
+        applies_to_type: ['work'],
         requires_type: ['work'],
         multiple_only: true,
         name: 'Merge Works...',
+        // The merge page loads at most 50 records (#10010); say so before the click.
+        warn_above: 50,
         href: olids => `/works/merge?records=${olids.join(',')}`,
     },
     /* Uncomment this when edition merging is available.

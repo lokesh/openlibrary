@@ -10,7 +10,7 @@ $# kept in sync.
     $ olid = author['key']
     $ name = author['name']
     $ url = '/authors/%s/%s' % (olid, urlsafe(name))
-    <li class="searchResultItem">
+    <li class="searchResultItem" data-ol-key="/authors/$olid">
       $# A person-icon placeholder sits behind the photo. The photo is requested
       $# with ?default=false so a missing photo 404s (rather than returning
       $# coverstore's blank 1x1 default); main.js then hides the broken <img>,

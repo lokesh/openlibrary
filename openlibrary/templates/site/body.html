@@ -4,10 +4,33 @@ $ bodyclass = ctx.get('bodyclass', [])
 $ show_ol_shell = ctx.get('show_ol_shell', True)
 $ bodyattrs = ctx.get('bodyattrs', [])
 
-$if show_ol_shell and (ctx.path.startswith('/works/OL') or ctx.path.startswith('/authors/OL') or ctx.path.startswith('/books/OL') or ctx.path.startswith('/search')):
-  $if ctx.user and ((ctx.user.is_librarian() or ctx.user.is_admin())):
+$# Librarian tools. One predicate for who sees them (is_librarian_or_higher);
+$# the endpoints check the same. Two implementations coexist behind a per-account
+$# preference while the tray replaces the classic ILE toolbar (see docs/ai/README.md).
+$# Classic is the default for the first release; the drawer switch opts an account in.
+$#   librarian_tools=classic  -> js/ile, on the four paths it always worked on
+$#   librarian_tools=tray     -> js/editing-mode, on every page
+$ librarian_tools = ''
+$ editing_mode = 'off'
+$if show_ol_shell and ctx.user and ctx.user.is_librarian_or_higher():
+  $ _prefs = ctx.user.preferences()
+  $ librarian_tools = _prefs.get('librarian_tools', 'classic')
+  $ editing_mode = _prefs.get('editing_mode', 'off')
+  $ _classic_path = ctx.path.startswith('/works/OL') or ctx.path.startswith('/authors/OL') or ctx.path.startswith('/books/OL') or ctx.path.startswith('/search')
+  $bodyattrs.append('data-username="%s"' % ctx.user.key.split('/')[-1])
+  $bodyattrs.append('data-librarian-tools="%s"' % librarian_tools)
+  $bodyattrs.append('data-editing-mode="%s"' % editing_mode)
+  $bodyattrs.append('data-can-apply="%s"' % ('true' if ctx.user.is_super_librarian_or_higher() else 'false'))
+  $if _prefs.get('tray_width'):
+    $bodyattrs.append('data-tray-width="%s"' % int(_prefs.get('tray_width')))
+    $bodyattrs.append('style="--tray-width: %spx"' % int(_prefs.get('tray_width')))
+  $if librarian_tools == 'classic':
+    $if _classic_path:
+      $bodyclass.append('show-librarian-tools')
+  $else:
     $bodyclass.append('show-librarian-tools')
-    $bodyattrs.append('data-username="%s"' % ctx.user.key.split('/')[-1])
+    $if editing_mode == 'on':
+      $bodyclass.append('editing-mode')
 
 <body class="$(' '.join(bodyclass))" $:(' '.join(bodyattrs))>
   <script>
@@ -38,3 +61,12 @@ $if show_ol_shell and (ctx.path.startswith('/works/OL') or ctx.path.startswith('
         $:render_template('site/banner', announcement, cookie_name, cookie_duration_days=30)
     $:page
   </main>
+  $if librarian_tools == 'tray':
+    $# The tray upgrades client-side (components/lit/OlLibrarianTray.js); rendered
+    $# here so it exists before JS and carries its translated strings.
+    <ol-librarian-tray
+      data-i18n="$:render_template('librarians/tray_i18n')"
+      page-key="$(ctx.path if (ctx.path.startswith('/works/OL') or ctx.path.startswith('/books/OL') or ctx.path.startswith('/authors/OL')) else '')"
+      $cond(ctx.user.is_super_librarian_or_higher(), 'can-apply', '')
+      $cond(editing_mode == 'on', 'active', '')
+    ></ol-librarian-tray>

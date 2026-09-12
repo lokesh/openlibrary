@@ -1,0 +1,66 @@
+{# /librarians/editing — what editing mode is, for the librarian who just found the switch. #}
+<div id="contentHead">
+    <h1>{{ _("Editing mode") }}</h1>
+</div>
+<div id="contentBody" class="librarian-help">
+    <p>
+        {{ _("Editing mode is the new librarian toolset, replacing the blue toolbar. Opt in from the menu (“New editing mode”), turn it on with the Editing switch in the header, and every record on any page gets a checkbox; the records you tick collect in the tray on the right (a sheet at the bottom on a phone). The tray remembers your selection on your account, across pages, tabs and days.") }}
+    </p>
+    <h2>{{ _("The tray") }}</h2>
+    <ul>
+        <li>{{ _("Tick a record to add it; tick again to remove it. Shift-click ticks a range. The + beside an author's name adds that author.") }}</li>
+        <li>{{ _("Paste OLIDs or URLs into the box at the bottom of the tray to add records that are not on the page.") }}</li>
+        <li>{{ _("Every action lists why it is disabled instead of hiding: “needs at least two”, “needs editions”.") }}</li>
+        <li>{{ _("Keys: j and k move between records, x ticks the focused one, shift+x ticks the group, a adds everything on the page.") }}</li>
+    </ul>
+    <h2>{{ _("Preview, apply, undo") }}</h2>
+    <p>
+        {{ _("Every batch action shows what would change and what the checks found before anything is written. Blocked warnings (different Wikidata items, an “is not” link, a record that changed since the preview) have to be acknowledged. A super-librarian applies; a librarian requests, and the batch goes to the merge queue for a super-librarian to apply. Applied batches are one edit each and can be undone as a unit from the dialog or the Batches tab.") }}
+    </p>
+    <h2>{{ _("Actions") }}</h2>
+    <table class="librarian-help__table">
+        <thead>
+            <tr>
+                <th>{{ _("Action") }}</th>
+                <th>{{ _("Applies to") }}</th>
+                <th>{{ _("Who applies") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for name, label, types, super_only in actions %}
+                <tr>
+                    <td>{{ label }}</td>
+                    <td>{{ types | join(", ") }}</td>
+                    <td>
+                        {% if super_only %}
+                            {{ _("Super-librarians") }}
+                        {% else %}
+                            {{ _("Super-librarians apply; librarians request") }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>{{ _("Merge works / Merge authors") }}</td>
+                <td>{{ _("works / authors") }}</td>
+                <td>{{ _("Opens the merge page with the tray's records after running the checks") }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h2>{{ _("Context") }}</h2>
+    <p>
+        {{ _("In editing mode a strip under a record's title says where it came from and whether a person has ever edited it, whether an edition's author disagrees with its work's, how many editions, lists and reading logs an edit will touch, whether a scan is linked, and whether a request is already open on it.") }}
+    </p>
+    <h2>{{ _("Coming next") }}</h2>
+    <p>
+        {{ _("A Look up tab over Wikidata, VIAF, Library of Congress Names and the Internet Archive; a split view for dividing a work's editions between several works; setting a field on many editions at once; merging editions; flagging and deleting records; notes and saved trays. They are built and will switch on once the first release has settled.") }}
+    </p>
+    <h2>{{ _("The classic toolbar") }}</h2>
+    <p>
+        {{ _("The previous toolbar (the blue bar that appeared when you clicked a search result) is the default until editing mode has replaced everything it did. Switch back any time from the tray's menu, “Use the classic toolbar”, or the menu switch.") }}
+    </p>
+    <p>
+        <a href="/librarians">{{ _("Librarians portal") }}</a> ·
+        <a href="/merges">{{ _("Merge queue") }}</a>
+    </p>
+</div>

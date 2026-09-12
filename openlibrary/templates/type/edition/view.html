@@ -161,6 +161,9 @@ $ worldcat_link = macros.WorldcatLink(isbn=isbn_13 or isbn_10, oclc_number=oclc_
       <a id="overview" name="overview" class="section-anchor section-anchor--no-height"></a>
       <!-- (desktop only) -->
       $:render_template("type/edition/title_and_author", page, work, edition, ocaid, work_title, star_ratings_stats, for_desktop=True)
+      $if is_librarian or is_privileged_user:
+        $# Filled by editing-mode/index.js with <ol-record-health> when editing mode is on.
+        <div class="record-health-slot" data-key="$page.key"></div>
 
       $if page.type.key in ["/type/work", "/type/edition", "/type/author"]:
         $if edition and page.type.key in ["/type/work"]:

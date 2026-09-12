@@ -34,7 +34,7 @@ export function renderBulkTagger() {
         </div>
         </div>
         <div class="submit-tags-section">
-            <button type="submit" class="bulk-tagging-submit cta-btn cta-btn--primary" disabled>Submit</button>
+            <ol-button type="submit" variant="primary" full-width class="bulk-tagging-submit" disabled>Submit</ol-button>
         </div>
     </form>`;
 }

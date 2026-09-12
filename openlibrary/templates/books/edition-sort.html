@@ -27,7 +27,7 @@ $ asin = isbn_10 or None
 
 $ url = book.get_cover_url("S") or "/static/images/icons/avatar_book-sm.png"
 
-    <td class="book">
+    <td class="book" data-ol-key="$book.key">
       <span class="hidden sort-key">$edition_sort_key</span>
       <div class="cover">
           <a href="$book.url()"><img

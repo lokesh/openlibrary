@@ -10,7 +10,8 @@
 #}
 {% from "TruncateString.html.jinja" import truncate_string %}
 {% from "FormatExpiry.html.jinja" import format_expiry %}
-<div class="book carousel__item">
+<div class="book carousel__item"
+     {% if url and (url.startswith('/works/') or url.startswith('/books/')) %}data-ol-key="{{ url }}"{% endif %}>
     <div class="book-cover">
         <div class="book-cover-wrapper">
             {% if loan %}

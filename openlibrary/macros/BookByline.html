@@ -12,8 +12,9 @@ $def render_author_link(author):
     $if birth_year or death_year:
       $ rendered_name += ' (%s – %s)' %(birth_year, death_year)
 
+  $ key_attr = ('data-ol-key="%s"' % author.get('key')) if (author.get('key') or '').startswith('/authors/') else ''
   $if url:
-    <a href="$url" $:attrs>$rendered_name</a>
+    <a href="$url" $:attrs $:key_attr>$rendered_name</a>
   $else:
     <span $:attrs>$rendered_name</span>
 

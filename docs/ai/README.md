@@ -195,6 +195,16 @@ Route handlers render templates via `render_template("path/name", args)` which m
 - `vendors.py` — External vendor integrations
 - `ia.py` — Internet Archive integration
 
+### Librarian tools: editing mode and the classic ILE
+
+Librarians (`is_librarian_or_higher()`) get one of two tool sets, chosen per account by the `librarian_tools` preference (`user.preferences()`, default `classic`; the hamburger drawer's "New editing mode" switch opts an account into `tray`) and branched once in `main.js`:
+
+- **Editing mode** (`librarian_tools=tray`) — `js/editing-mode/` (store, selection engine, wiring) plus the Lit components `ol-librarian-tray`, `ol-batch-preview`, `ol-tray-lookup`, `ol-tray-split`, `ol-record-health`, and `ol-autocomplete` (typeahead over the `_autocomplete` endpoints, used for author and target-work fields). A header switch (`editing_mode` preference) turns it on; any element carrying `data-ol-key="/works/OL…W"` (the markup contract, on the listing macros) gets a checkbox; the tray is the account's persistent working set. Server side: `core/librarian_tray.py` (a store document per user), `core/batch_ops.py` (preview → apply/request → revert, one `save_many` per batch, rows in `librarian_batches`), `core/record_context.py` (health strip and preview checks), `core/lookup.py` (Wikidata/VIAF/LC/IA/OL lookups), routed by `fastapi/librarians.py` under `/librarians/*.json`. Pages: `/librarians/editing` (help), `/librarians/batch/<id>` (queue review). Super-librarians apply; librarians request (a `BATCH` row in `community_edits_queue`).
+  - **Release gating.** The first release ships only the loop the classic bar covered plus the drag-and-drop replacement: `tag`, `move_editions`, `set_author`, the merge checks, add to list. `batch_ops.ENABLED_ACTIONS` (server) and `V1_ACTIONS` / `V1_ONLY` in `OlLibrarianTray.js` (client) are the two gates; the lookup endpoints sit behind `LOOKUP_ENABLED` in `fastapi/librarians.py`. Everything else (lookup panel, split view, set field, merge editions, flag, delete, set identifier, notes, saved trays) is built and hidden. The health strip reads local data only; external lookups belong to the on-demand preview checks.
+- **Classic ILE** (`librarian_tools=classic`) — `js/ile/`, the blue toolbar, on the four paths it always worked on. Kept until editing mode reaches parity, then deleted; the bulk tagger (`js/bulk-tagger/`, `bulk_tag.py`) is shared by both and stays.
+
+Never load both on one page; `templates/site/body.html` sets `data-librarian-tools` and the loader is an `if/else`.
+
 ### Frontend
 
 - **CSS:** CSS files in `static/css/`, compiled via `scripts/vite/build.mjs` (`--only css`) to `static/build/css/`. Files prefixed `page-` are page-specific. Shared styles in `static/css/base/`.

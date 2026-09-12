@@ -364,8 +364,26 @@ $(function() {
         }
     }
 
-    // Conditionally load Integrated Librarian Environment
-    if (document.getElementsByClassName('show-librarian-tools').length) {
+    // Librarian tools: the classic ILE toolbar or its replacement, editing mode
+    // with the tray, chosen per account (data-librarian-tools on <body>). Never
+    // both on one page: two click handlers on every result would fight.
+    const librarianTools = document.body.dataset.librarianTools;
+    // The drawer switch between the two tool sets lives here because only one
+    // of the two modules below is ever loaded. Saving reloads: body classes
+    // and the header switch are rendered server-side.
+    for (const toggle of document.querySelectorAll('.librarian-tools-toggle--drawer')) {
+        toggle.addEventListener('ol-toggle-change', (e) => {
+            toggle.disabled = true;
+            import('./editing-mode/api')
+                .then(({ api }) => api.preferences({ librarian_tools: e.detail.checked ? 'tray' : 'classic' }))
+                .then(() => window.location.reload())
+                .catch(() => { toggle.disabled = false; toggle.checked = !e.detail.checked; });
+        });
+    }
+    if (librarianTools && librarianTools !== 'classic') {
+        import('./editing-mode')
+            .then((module) => module.init());
+    } else if (document.getElementsByClassName('show-librarian-tools').length) {
         import('./ile')
             .then((module) => module.init())
             .then(() => {

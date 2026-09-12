@@ -53,7 +53,7 @@ $var title: $_('Search Open Library for "%(query)s"', query=q)
                 $ date = doc.get('birth_date', '') + ' - ' + doc.get('death_date', '')
             $elif 'date' in doc:
                 $ date = doc['date']
-            <li class="searchResultItem">
+            <li class="searchResultItem" data-ol-key="$doc['key']">
               <img src="$get_coverstore_public_url()/a/olid/$(doc['key'].split('/')[-1])-M.jpg" itemprop="image" class="cover author" alt="$_('Photo of %(author)s', author=n)">
               <div class="details">
                 <a href="$url" class="larger">$n</a>&nbsp;<span class="brown small">$date</span><br />

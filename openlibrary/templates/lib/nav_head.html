@@ -83,6 +83,18 @@ $ shows_merge_count = ctx.user and ctx.user.is_super_librarian_or_higher()
       <li><a class="ol-button-static ol-button-static--primary" href="/account/create">$_("Sign Up")</a></li>
     </ul>
 
+  $if is_privileged_user and ctx.user.preferences().get('librarian_tools', 'classic') == 'tray':
+    $# Editing mode: the visible switch for librarian tools. The body carries the
+    $# same state as data-editing-mode; editing-mode/index.js keeps both in sync.
+    <div class="editing-component">
+      <ol-toggle
+        id="editing-mode-toggle"
+        label="$_('Editing')"
+        accessible-label="$_('Editing mode')"
+        $cond(ctx.user.preferences().get('editing_mode') == 'on', 'checked', '')
+      ></ol-toggle>
+    </div>
+
   <div class="hamburger-component" data-ol-link-track="HeaderBar|Hamburger">
     <button class="hamburger-trigger" aria-label="$_('Menu')" aria-expanded="false">
       $if ctx.user:
@@ -120,7 +132,29 @@ $ shows_merge_count = ctx.user and ctx.user.is_super_librarian_or_higher()
       <li class="drawer-menu__item">
         <a href="$(ctx.user.key)" data-ol-link-track="Hamburger|MyProfile">$_("My Profile")</a>
       </li>
+      $if is_privileged_user and ctx.user.preferences().get('librarian_tools', 'classic') == 'tray':
+        <li class="drawer-menu__item drawer-menu__item--editing">
+          <ol-toggle
+            class="editing-mode-toggle--drawer"
+            label="$_('Editing')"
+            sublabel="$_('Librarian tools')"
+            accessible-label="$_('Editing mode')"
+            $cond(ctx.user.preferences().get('editing_mode') == 'on', 'checked', '')
+          ></ol-toggle>
+        </li>
       $if is_privileged_user:
+        $# Opts the account into the tray (editing mode) in place of the classic
+        $# ILE toolbar, which is the default. Wired in main.js, which loads under
+        $# either tool set.
+        <li class="drawer-menu__item drawer-menu__item--editing">
+          <ol-toggle
+            class="librarian-tools-toggle--drawer"
+            label="$_('New editing mode')"
+            sublabel="$_('Try the tray; turn off to get the classic toolbar back')"
+            accessible-label="$_('Use the new editing mode instead of the classic toolbar')"
+            $cond(ctx.user.preferences().get('librarian_tools', 'classic') == 'tray', 'checked', '')
+          ></ol-toggle>
+        </li>
         <li class="drawer-menu__item">
           $if shows_merge_count and cached_get_counts_by_mode(mode='open') > 0:
             <div class="drawer-menu__badge">$(cached_get_counts_by_mode(mode='open'))</div>

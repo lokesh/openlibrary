@@ -48,6 +48,9 @@ $ show_librarian_extras = ctx.user and (ctx.user.is_admin() or ctx.user.is_libra
 
     <h1 itemprop="name">$title</h1>
     $if show_librarian_extras:
+        $# Filled by editing-mode/index.js with <ol-record-health> when editing mode is on.
+        <div class="record-health-slot" data-key="$page.key"></div>
+    $if show_librarian_extras:
         <h2 class="author collapse">
             $if page.birth_date or page.death_date:
                 <span itemprop="birthDate">$page.birth_date</span> - <span itemprop="deathDate">$page.death_date</span>
