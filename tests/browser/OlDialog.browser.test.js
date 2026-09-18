@@ -75,3 +75,25 @@ test('Shift+Tab runs the same cycle backwards', async() => {
     await userEvent.keyboard('{Shift>}{Tab}{/Shift}');
     expect(document.activeElement).toBe(textarea);
 });
+
+test('Tab reaches an iframe — the whole content of the Preview Book dialog', async() => {
+    render(html`
+        <ol-dialog label="Preview Book" style="--ol-dialog-animation-duration: 0ms">
+            <iframe title="Book Preview" style="width: 200px; height: 120px; border: 0"></iframe>
+        </ol-dialog>
+    `);
+    const el = document.querySelector('ol-dialog');
+    el.open = true;
+    await el.updateComplete;
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+    // The trap opens on the preview itself rather than falling back to the X.
+    const iframe = el.querySelector('iframe');
+    expect(document.activeElement).toBe(iframe);
+
+    // And Tab off the close button returns to it. (Tab *inside* the frame is the
+    // browser's to handle — those keydowns never reach this document.)
+    el.shadowRoot.querySelector('.close-button').focus();
+    await userEvent.keyboard('{Tab}');
+    expect(document.activeElement).toBe(iframe);
+});

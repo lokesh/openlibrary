@@ -47,15 +47,31 @@ describe('isFocusable', () => {
 });
 
 describe('FOCUSABLE_SELECTOR', () => {
-    test('matches the documented controls (button, input, a[href], …)', () => {
-        // A meta-test: a regression in the selector string would silently break
-        // every focus trap built on top of this util.
-        expect(FOCUSABLE_SELECTOR).toMatch(/button/);
-        expect(FOCUSABLE_SELECTOR).toMatch(/input/);
-        expect(FOCUSABLE_SELECTOR).toMatch(/tabindex/);
-        // Scoped to links: a bare `[href]` also matches a sprite icon's <use>.
-        expect(FOCUSABLE_SELECTOR).toMatch(/a\[href\]/);
-        expect(FOCUSABLE_SELECTOR).not.toMatch(/[\s,]\[href\]/);
+    test('matches every element the browser tabs to, and nothing it skips', () => {
+        // The dialog and drawer traps replace native Tab, so a miss is content
+        // the keyboard can't reach and a false match is a Tab going nowhere.
+        const root = document.createElement('div');
+        root.innerHTML = [
+            '<button class="yes-button"></button>',
+            '<a class="yes-link" href="/help">help</a>',
+            '<a class="no-anchor">no href</a>',
+            '<input class="yes-input">',
+            '<input class="no-hidden-input" type="hidden">',
+            '<select class="yes-select"></select>',
+            '<textarea class="yes-textarea"></textarea>',
+            '<iframe class="yes-iframe"></iframe>',
+            '<details><summary class="yes-summary">More</summary></details>',
+            '<div class="yes-editable" contenteditable="true"></div>',
+            '<div class="no-editable" contenteditable="false"></div>',
+            '<div class="yes-tabindex" tabindex="0"></div>',
+            '<div class="no-roving-item" tabindex="-1"></div>',
+            '<svg><use class="no-sprite-use" href="/static/sprite.svg#icon-eye-off"></use></svg>',
+        ].join('');
+
+        for (const el of root.querySelectorAll('[class]')) {
+            const name = el.getAttribute('class');
+            expect(el.matches(FOCUSABLE_SELECTOR), name).toBe(name.startsWith('yes-'));
+        }
     });
 });
 
@@ -207,6 +223,16 @@ describe('getTabbableElements', () => {
         document.body.appendChild(root);
 
         expect(getTabbableElements(root).map(el => el.tagName.toLowerCase())).toEqual(['textarea', 'a']);
+    });
+
+    test('treats an editable region as one stop, not a list of what was typed into it', () => {
+        // ol-markdown-editor's ProseMirror root: a link in the document the
+        // reader is editing is content, and the browser doesn't tab to it.
+        const root = document.createElement('div');
+        root.innerHTML = '<div class="editor" contenteditable="true"><a href="/x">typed link</a></div>';
+        document.body.appendChild(root);
+
+        expect(getTabbableElements(root).map(el => el.className)).toEqual(['editor']);
     });
 
     test('skips hidden and disabled elements and their subtrees', () => {

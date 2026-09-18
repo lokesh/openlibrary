@@ -9,13 +9,25 @@
 /**
  * Commonly focusable elements. Excludes `tabindex="-1"` (programmatic focus only).
  *
- * The href clause is scoped to links: a bare `[href]` also matches the `<use>`
- * in every sprite icon, which can't take focus, so a trap would stop there and
- * `.focus()` would no-op — leaving Tab stuck on the element before it.
+ * `ol-dialog` and `ol-drawer` preventDefault() Tab and move focus themselves, so
+ * this list replaces the browser's own rules rather than approximating them: a
+ * missing entry is content the keyboard can't reach, an entry that refuses focus
+ * is a Tab that goes nowhere. Hence `a[href]` (a bare `[href]` matches the `<use>`
+ * in every sprite icon) and the explicit hidden-input exclusion.
  *
  * @type {string}
  */
-export const FOCUSABLE_SELECTOR = 'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+export const FOCUSABLE_SELECTOR = [
+    'button',
+    'a[href]',
+    'input:not([type="hidden"])',
+    'select',
+    'textarea',
+    'details > summary',
+    'iframe',
+    '[contenteditable]:not([contenteditable="false"])',
+    '[tabindex]:not([tabindex="-1"])',
+].join(', ');
 
 /**
  * The focused element, descending through shadow roots.
@@ -98,7 +110,9 @@ function visitTabbable(el, out) {
     // exclude -1 explicitly or a roving composite's items would slip through.
     const isStop = el.matches?.(FOCUSABLE_SELECTOR) && el.getAttribute('tabindex') !== '-1';
     if (isStop) out.push(el);
-    if (isStop && el.shadowRoot) return;
+    // An editable region is one stop: the links and controls the reader typed
+    // into it are content, not tab stops.
+    if (isStop && (el.shadowRoot || el.hasAttribute?.('contenteditable'))) return;
     walkTabbables(el.shadowRoot ?? el, out);
 }
 
